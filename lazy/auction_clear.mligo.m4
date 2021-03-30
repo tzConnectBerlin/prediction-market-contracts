@@ -68,11 +68,11 @@ let mint_tokens ( market_id, clearing_numbers, token_storage : market_id * clear
 	let supply_map = token_mint_to_reserve ( {
 		amount = no_token_in_reserve;
 		token_id = ( get_no_token_id market_id );
-	}, token_storage.supply_map ) in
+	}, supply_map ) in
 	let supply_map = token_mint_to_reserve ( {
 		amount = clearing_numbers.lqt_in_swap;
 		token_id = ( get_liquidity_token_id market_id );
-	}, token_storage.supply_map ) in
+	}, supply_map ) in
 	let supply_map = token_mint_to_reserve ( {
 		amount = clearing_numbers.lqt_in_swap;
 		token_id = ( get_liquidity_reward_token_id market_id );
@@ -99,8 +99,10 @@ let clear_auction ( market_id, business_storage : market_id * business_storage )
 	let market_map = business_storage.markets.market_map in
 	let market_data = get_market ( market_id, market_map ) in
 	let auction_data = get_auction_data market_data in
-	let u = check_auction_end_date auction_data in
-	let bootstrapped_market_data, token_storage = set_market_state_cleared ( market_id, auction_data, business_storage.tokens ) in
+	let bootstrapped_market_data, token_storage = begin
+		check_auction_end_date auction_data;
+		set_market_state_cleared ( market_id, auction_data, business_storage.tokens )
+	end in
 	let market_data = save_bootstrapped_market_data ( bootstrapped_market_data, market_data ) in
 	let market_map = save_market ( market_id, market_data, market_map ) in
 	( [] : operation list ), { business_storage with

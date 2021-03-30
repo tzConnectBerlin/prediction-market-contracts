@@ -133,4 +133,11 @@ type market_trade_params =
 	amount : nat;
 }
 
+type directional_market_trade_params =
+[@layout:comb]
+{
+	token_to_sell : bool;
+	params : market_trade_params;
+}
+
 ») m4_dnl

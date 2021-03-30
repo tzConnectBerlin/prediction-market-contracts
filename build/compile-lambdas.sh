@@ -1,6 +1,6 @@
 #!/bin/bash
 
-lambda_dir="../src/lazy/lazy_lambdas"
+lambda_dir="../lazy/lazy_lambdas"
 FILES=${lambda_dir}/*
 
 for f in $FILES

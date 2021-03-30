@@ -2,14 +2,14 @@ m4_changequote m4_dnl
 m4_changequote(«,») m4_dnl
 m4_ifdef(«MARKET»,,«m4_define(«MARKET»,1) m4_dnl
 m4_include(m4_helpers.m4) m4_dnl
-m4_loadfile(../common,maths_interface.mligo.m4) m4_dnl
+m4_loadfile(.,maths.mligo.m4) m4_dnl
 
 let err_NO_SUCH_MARKET = "No such market"
 let err_MARKET_NOT_BOOTSTRAPPED = "Market not bootstrapped"
 let err_MARKET_ALREADY_RESOLVED = "Market has already been resolved"
 
 let check_is_market_still_open ( bootstrapped_market_data : bootstrapped_market_data ) : unit =
-	match bootstrapped_market_data.resoltion with
+	match bootstrapped_market_data.resolution with
 	| Some u -> ( failwith err_MARKET_ALREADY_RESOLVED )
 	| None -> unit
 
@@ -22,6 +22,14 @@ let get_bootstrapped_market_data ( market_data : market_data ) : bootstrapped_ma
 	match market_data.state with
 	| MarketBootstrapped e -> e
 	| AuctionRunning u -> ( failwith err_MARKET_NOT_BOOTSTRAPPED : bootstrapped_market_data )
+
+let increment_currency_pool ( currency_pool, bootstrapped_market_data : currency_pool * bootstrapped_market_data ) : bootstrapped_market_data =
+	let currency_pool : currency_pool = {
+		market_currency_pool = ( add_nat_nat currency_pool.market_currency_pool bootstrapped_market_data.currency_pool.market_currency_pool );
+		liquidity_reward_currency_pool = ( add_nat_nat currency_pool.liquidity_reward_currency_pool bootstrapped_market_data.currency_pool.liquidity_reward_currency_pool );
+		auction_reward_currency_pool = ( add_nat_nat currency_pool.auction_reward_currency_pool bootstrapped_market_data.currency_pool.auction_reward_currency_pool );
+	} in
+	{ bootstrapped_market_data with currency_pool = currency_pool; }
 
 let save_bootstrapped_market_data ( bootstrapped_market_data, market_data : bootstrapped_market_data * market_data ) : market_data =
 	{ market_data with state = MarketBootstrapped(bootstrapped_market_data); }

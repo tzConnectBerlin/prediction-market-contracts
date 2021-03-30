@@ -24,11 +24,13 @@ let check_market_id_availability ( market_id, market_map : market_id * market_ma
 	| None -> unit
 
 let create_market ( create_market_params, market_storage : create_market_params * market_storage ) : operation list * market_storage =
-	let u = check_market_id_availability ( create_market_params.market_id, market_storage.market_map ) in
-	let auction_data = initialize_auction ( create_market_params.auction_period_end, create_market_params.bet ) in
+	let auction_data = begin
+		check_market_id_availability ( create_market_params.market_id, market_storage.market_map );
+		initialize_auction ( create_market_params.auction_period_end, create_market_params.bet )
+	end in
 	let market_data : market_data = {
 		metadata = create_market_params.metadata;
-		state = AuctionRunning(auction_data);
+		state = AuctionRunning(auction_data)
 	} in
 	let market_map = save_market ( create_market_params.market_id, market_data, market_storage.market_map ) in
 	let auction_bet_id : auction_bet_id = {

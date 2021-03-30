@@ -45,10 +45,12 @@ let seal_contract ( lambda_repository : lambda_repository ) : lambda_repository 
 [@inline]
 let installer_dispatch ( action, container_storage : installer_action * container_storage ) : operation list * container_storage =
 	let lambda_repository = container_storage.lambda_repository in
-	let u = assert_installer_access_control lambda_repository in
-	let new_repository = match action with
-	| InstallLambda params -> install_lambda ( params, lambda_repository )
-	| SealContract -> seal_contract lambda_repository in
+	let new_repository = begin
+		assert_installer_access_control lambda_repository;
+		match action with
+		| InstallLambda params -> install_lambda ( params, lambda_repository )
+		| SealContract -> seal_contract lambda_repository
+	end in
 	( [] : operation list ), { container_storage with lambda_repository = new_repository }
 
 ») m4_dnl
