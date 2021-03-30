@@ -46,14 +46,14 @@ type single_transfer_args =
 let token_transfer_internal ( args, ledger_map : single_transfer_args * ledger_map ) : ledger_map =
 	let token_id = args.tx.token_id in
 	let token_amount = args.tx.amount in
-	let src_account = ( {
+	let src_account : ledger_id = {
 		owner = args.src;
 		token_id = token_id;
-	} : ledger_id ) in
-	let dst_account = ( {
+	} in
+	let dst_account : ledger_id = {
 		owner = args.tx.dst;
 		token_id = token_id;
-	} : ledger_id ) in
+	} in
 	let ledger_map = debit_tokens_from ( src_account, token_amount, ledger_map ) in
 	credit_tokens_to ( dst_account, token_amount, ledger_map )
 
@@ -70,10 +70,10 @@ let token_mint_to_reserve ( args, supply_map : no_address_token_args * supply_ma
 	let supply_record = get_token_supply ( token_id, supply_map ) in
 	let total_supply = add_nat_nat supply_record.total_supply token_amount in
 	let in_reserve = add_nat_nat supply_record.in_reserve token_amount in
-	let supply_record = ( {
+	let supply_record : supply_record = {
 		total_supply = total_supply;
 		in_reserve = in_reserve;
-	} : supply_record ) in
+	} in
 	update_token_supply ( token_id, supply_record, supply_map )
 
 let token_mint_to_account ( args, token_storage : transfer_details * token_storage ) : token_storage =
@@ -83,10 +83,10 @@ let token_mint_to_account ( args, token_storage : transfer_details * token_stora
 	let total_supply = add_nat_nat supply_record.total_supply token_amount in
 	let supply_record = { supply_record with total_supply = total_supply; } in
 	let supply_map = update_token_supply ( token_id, supply_record, token_storage.supply_map ) in
-	let dst_account = ( {
+	let dst_account : ledger_id = {
 		owner = args.dst;
 		token_id = token_id;
-	} : ledger_id ) in
+	} in
 	let ledger_map = credit_tokens_to ( dst_account, token_amount, token_storage.ledger_map ) in
 	{ token_storage with
 		supply_map = supply_map;
@@ -100,11 +100,35 @@ let token_release_to_account ( args, token_storage : transfer_details * token_st
 	let in_reserve = sub_nat_nat supply_record.in_reserve token_amount err_NOT_ENOUGH_BALANCE in
 	let supply_record = { supply_record with in_reserve = in_reserve; } in
 	let supply_map = update_token_supply ( token_id, supply_record, token_storage.supply_map ) in
-	let dst_account = ( {
+	let dst_account : ledger_id = {
 		owner = args.dst;
 		token_id = token_id;
-	} : ledger_id ) in
+	} in
 	let ledger_map = credit_tokens_to ( dst_account, token_amount, token_storage.ledger_map ) in
+	{ token_storage with
+		supply_map = supply_map;
+		ledger_map = ledger_map;
+	}
+
+type token_burn_args =
+[@layout:comb]
+{
+	src : address;
+	tx : no_address_token_args;
+}
+
+let token_burn_from_account ( args, token_storage : token_burn_args * token_storage ) : token_storage =
+	let token_id = args.tx.token_id in
+	let token_amount = args.tx.amount in
+	let supply_record = get_token_supply ( token_id, token_storage.supply_map ) in
+	let total_supply = sub_nat_nat supply_record.total_supply token_amount err_NOT_ENOUGH_BALANCE in
+	let supply_record = { supply_record with total_supply = total_supply; } in
+	let supply_map = update_token_supply ( token_id, supply_record, token_storage.supply_map ) in
+	let src_account : ledger_id = {
+		owner = args.src;
+		token_id = token_id;
+	} in
+	let ledger_map = debit_tokens_from ( src_account, token_amount, token_storage.ledger_map ) in
 	{ token_storage with
 		supply_map = supply_map;
 		ledger_map = ledger_map;
