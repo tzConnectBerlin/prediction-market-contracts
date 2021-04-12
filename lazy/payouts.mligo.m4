@@ -9,7 +9,7 @@ let reward_denominator = 100n
 let liquidity_reward_numerator = 4n
 //let auction_reward_numerator = 1n 
 
-type payout_numbers =
+type payout_params =
 [@layout:comb]
 {
 	quantity : nat;
@@ -17,15 +17,20 @@ type payout_numbers =
 	currency_pool : nat;
 }
 
-let calculate_payout ( payout : payout_numbers ) : payout_numbers =
+type payout_result =
+[@layout:comb]
+{
+	currency_payout : nat;
+	new_currency_pool : nat;
+}
+
+let calculate_payout ( payout : payout_params ) : payout_result =
 	let numerator = mul_nat_nat payout.currency_pool payout.quantity in
 	let currency_payout = div_nat_nat_floor numerator payout.token_supply err_INTERNAL in
 	let new_currency_pool = sub_nat_nat payout.currency_pool currency_payout err_INTERNAL in
-	let new_token_supply = sub_nat_nat payout.token_supply payout.quantity err_INTERNAL in
 	{
-		quantity = currency_payout;
-		token_supply = new_token_supply;
-		currency_pool = new_currency_pool;
+		currency_payout = currency_payout;
+		new_currency_pool = new_currency_pool;
 	}
 
 let split_revenue ( quantity : nat ) : currency_pool =

@@ -42,20 +42,12 @@ let calculate_bet_details ( bet : bet ) : bet_details =
 let get_auction_data ( market_data : market_data ) : auction_data =
 	match market_data.state with
 	| AuctionRunning e -> e
-	| MarketBootstrapped u -> ( failwith err_AUCTION_CLOSED : auction_data )
+	| MarketBootstrapped _ -> ( failwith err_AUCTION_CLOSED : auction_data )
 
 let save_auction_data ( auction_data, market_data : auction_data * market_data ) : market_data =
 	{ market_data with state = AuctionRunning(auction_data); }
 
-let get_auction_bet ( auction_bet_id, auction_bet_map : auction_bet_id * auction_bet_map ) : bet =
-	match Big_map.find_opt auction_bet_id auction_bet_map with
-	| Some e -> e
-	| None -> empty_bet
-
-let save_auction_bet ( auction_bet_id, bet, auction_bet_map : auction_bet_id * bet * auction_bet_map ) : auction_bet_map =
-	Big_map.update auction_bet_id ( Some(bet) ) auction_bet_map
-
-let delete_auction_bet ( auction_bet_id, auction_bet_map : auction_bet_id * auction_bet_map ) : auction_bet_map =
-	Big_map.update auction_bet_id ( None : bet option ) auction_bet_map
+let save_auction_bet ( lqt_provider_id, bet, liquidity_provider_map : lqt_provider_id * bet * liquidity_provider_map ) : liquidity_provider_map =
+	Big_map.update lqt_provider_id ( Some( Bet( bet ) ) ) liquidity_provider_map
 
 ») m4_dnl

@@ -1,6 +1,6 @@
 m4_changequote m4_dnl
 m4_changequote(«,») m4_dnl
-m4_ifdef(«META»,,«m4_define(«META»,1) m4_dnl
+m4_ifdef(«MARKET_TOKEN_IDS»,,«m4_define(«MARKET_TOKEN_IDS»,1) m4_dnl
 m4_include(m4_helpers.m4) m4_dnl
 m4_loadfile(../common,maths_interface.mligo.m4) m4_dnl
 
@@ -31,7 +31,5 @@ let get_auction_reward_token_id ( market_id : market_id ) : token_id =
 [@inline]
 let get_liquidity_reward_token_id ( market_id : market_id ) : token_id =
 	add_nat_nat 4n ( get_base_token_id_for_market market_id )
-
-
 
 ») m4_dnl

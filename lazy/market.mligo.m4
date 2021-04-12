@@ -6,12 +6,18 @@ m4_loadfile(.,maths.mligo.m4) m4_dnl
 
 let err_NO_SUCH_MARKET = "No such market"
 let err_MARKET_NOT_BOOTSTRAPPED = "Market not bootstrapped"
+let err_MARKET_NOT_RESOLVED = "Market not resolved"
 let err_MARKET_ALREADY_RESOLVED = "Market has already been resolved"
 
 let check_is_market_still_open ( bootstrapped_market_data : bootstrapped_market_data ) : unit =
 	match bootstrapped_market_data.resolution with
-	| Some u -> ( failwith err_MARKET_ALREADY_RESOLVED )
+	| Some _ -> ( failwith err_MARKET_ALREADY_RESOLVED )
 	| None -> unit
+
+let get_market_result ( bootstrapped_market_data : bootstrapped_market_data ) : resolution_data =
+	match bootstrapped_market_data.resolution with
+	| Some d -> d
+	| None -> ( failwith err_MARKET_NOT_RESOLVED : resolution_data )
 
 let get_market ( market_id, market_map : market_id * market_map ) : market_data =
 	match Big_map.find_opt market_id market_map with
@@ -21,7 +27,7 @@ let get_market ( market_id, market_map : market_id * market_map ) : market_data 
 let get_bootstrapped_market_data ( market_data : market_data ) : bootstrapped_market_data =
 	match market_data.state with
 	| MarketBootstrapped e -> e
-	| AuctionRunning u -> ( failwith err_MARKET_NOT_BOOTSTRAPPED : bootstrapped_market_data )
+	| AuctionRunning _ -> ( failwith err_MARKET_NOT_BOOTSTRAPPED : bootstrapped_market_data )
 
 let increment_currency_pool ( currency_pool, bootstrapped_market_data : currency_pool * bootstrapped_market_data ) : bootstrapped_market_data =
 	let currency_pool : currency_pool = {

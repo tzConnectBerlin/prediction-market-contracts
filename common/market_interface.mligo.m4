@@ -41,6 +41,7 @@ type bootstrapped_market_data =
 	currency_pool : currency_pool;
 	bootstrap_yes_probability : fixedpoint;
 	bootstrapped_at_block : nat;
+	liquidity_reward_supply_updated_at_block : nat;
 	resolution : resolution_data option;
 }
 
@@ -81,14 +82,18 @@ type bet =
 	quantity : nat;
 }
 
-type auction_bet_id =
+type lqt_provider_id =
 [@layout:comb]
 {
 	originator : address;
 	market_id : market_id;
 }
 
-type auction_bet_map = ( auction_bet_id, bet ) big_map
+type lqt_provider_details =
+	| Bet of bet
+	| Liquidity_reward_updated_at of nat
+	
+type liquidity_provider_map = ( lqt_provider_id, lqt_provider_details ) big_map
 
 // The root storage for markets
 
@@ -96,7 +101,7 @@ type market_storage =
 [@layout:comb]
 {
 	market_map : market_map;
-	auction_bet_map : auction_bet_map;
+	liquidity_provider_map : liquidity_provider_map;
 }
 
 //

@@ -1,0 +1,74 @@
+m4_changequote m4_dnl
+m4_changequote(«,») m4_dnl
+m4_ifdef(«LQT_REWARDS»,,«m4_define(«LQT_REWARDS»,1) m4_dnl
+m4_include(m4_helpers.m4) m4_dnl
+m4_loadfile(.,maths.mligo.m4) m4_dnl
+
+// FIXME this needs to take into account if and when the market was resolved!
+
+let get_current_liquidity_activity_level ( bootstrapped_market_data : bootstrapped_market_data ) : nat =
+	match bootstrapped_market_data.resolution with
+	| None -> Tezos.level
+	| Some e -> e.resolved_at_block
+
+let save_lqt_provider_update_level ( lqt_provider_id, level, liquidity_provider_map : lqt_provider_id * nat * liquidity_provider_map ) : liquidity_provider_map =
+	Big_map.update lqt_provider_id ( Some( Liquidity_reward_updated_at( level ) ) ) liquidity_provider_map
+
+type update_lqt_reward_supply_internal_args =
+{
+	level : nat;
+	lqt_token_id : token_id;
+	lqt_reward_token_id : token_id;
+}
+
+let update_lqt_reward_supply_internal ( args, bootstrapped_market_data, supply_map : update_lqt_reward_supply_internal_args * bootstrapped_market_data * supply_map ) : bootstrapped_market_data * supply_map =
+	let blocks_elapsed = sub_nat_nat args.level bootstrapped_market_data.liquidity_reward_supply_updated_at_block err_INTERNAL in
+	let lqt_supply = get_token_supply ( args.lqt_token_id, supply_map ) in
+	let lqt_reward_to_mint = mul_nat_nat blocks_elapsed lqt_supply in
+	let supply_map = token_mint_to_reserve ( {
+		token_id = args.lqt_reward_token_id;
+		amount = lqt_reward_to_mint; }, supply_map ) in
+	{ bootstrapped_market_data with liquidity_reward_supply_updated_at_block = args.level; }, supply_map
+
+let update_lqt_reward_supply ( market_id, bootstrapped_market_data, supply_map : market_id * bootstrapped_market_data * supply_map ) : bootstrapped_market_data * supply_map =
+	let level = get_current_liquidity_activity_level bootstrapped_market_data in
+	let lqt_token_id = get_liquidity_token_id market_id in
+	let lqt_reward_token_id = get_liquidity_reward_token_id market_id in
+	update_lqt_reward_supply_internal ( {
+		level = level;
+		lqt_token_id = lqt_token_id;
+		lqt_reward_token_id = lqt_reward_token_id;
+	}, bootstrapped_market_data, supply_map )
+
+let withdraw_lqt_reward_tokens ( lqt_provider_id, last_update, bootstrapped_market_data, token_storage :
+		lqt_provider_id * nat * bootstrapped_market_data * token_storage ) :
+		bootstrapped_market_data * token_storage * nat =
+	let provider_address = lqt_provider_id.originator in
+	let level = get_current_liquidity_activity_level bootstrapped_market_data in
+	let market_id = lqt_provider_id.market_id in
+	let lqt_token_id = get_liquidity_token_id market_id in
+	let lqt_reward_token_id = get_liquidity_reward_token_id market_id in
+	//
+	// Update supply
+	let ( bootstrapped_market_data, new_supply_map ) = update_lqt_reward_supply_internal ( {
+		level = level;
+		lqt_token_id = lqt_token_id;
+		lqt_reward_token_id = lqt_reward_token_id;
+	}, bootstrapped_market_data, token_storage.supply_map ) in
+	let token_storage = { token_storage with supply_map = new_supply_map } in
+	//
+	// Withdraw tokens from updated supply
+	let blocks_elapsed = sub_nat_nat level last_update err_INTERNAL in
+	let lqt_balance = get_token_balance ( { 
+		token_id = lqt_token_id;
+		owner = provider_address;
+	}, token_storage.ledger_map ) in
+	let lqt_reward_to_withdraw = mul_nat_nat blocks_elapsed lqt_balance in
+	let token_storage = token_release_to_account ( {
+		token_id = lqt_reward_token_id;
+		amount = lqt_reward_to_withdraw;
+		dst = provider_address;
+	}, token_storage ) in
+	bootstrapped_market_data, token_storage, level
+
+») m4_dnl
