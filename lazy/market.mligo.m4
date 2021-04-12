@@ -14,11 +14,6 @@ let check_is_market_still_open ( bootstrapped_market_data : bootstrapped_market_
 	| Some _ -> ( failwith err_MARKET_ALREADY_RESOLVED )
 	| None -> unit
 
-let get_market_result ( bootstrapped_market_data : bootstrapped_market_data ) : resolution_data =
-	match bootstrapped_market_data.resolution with
-	| Some d -> d
-	| None -> ( failwith err_MARKET_NOT_RESOLVED : resolution_data )
-
 let get_market ( market_id, market_map : market_id * market_map ) : market_data =
 	match Big_map.find_opt market_id market_map with
 	| None -> ( failwith err_NO_SUCH_MARKET : market_data )

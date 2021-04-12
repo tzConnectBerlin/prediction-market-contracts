@@ -12,6 +12,6 @@ LAZY_TYPE(market_id)
 let f : business_endpoint_lambda =
 	fun ( params, business_storage : bytes * business_storage ) ->
 	let params = unpack_market_id params in
-	withdraw_reserve_tokens ( params, business_storage )
+	( [] : operation list ), withdraw_reserve_tokens ( params, business_storage )
 
 ») m4_dnl
