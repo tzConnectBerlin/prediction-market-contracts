@@ -1,6 +1,6 @@
 m4_changequote m4_dnl
 m4_changequote(«,») m4_dnl
-m4_ifdef(«MARKET_WITHDRAW»,,«m4_define(«MARKET_WITHDRAW»,1) m4_dnl
+m4_ifdef(«AUCTION_WITHDRAW»,,«m4_define(«AUCTION_WITHDRAW»,1) m4_dnl
 m4_include(m4_helpers.m4) m4_dnl
 m4_loadfile(../common,business_interface_root.mligo.m4) m4_dnl
 m4_loadfile(.,common_error.mligo.m4) m4_dnl

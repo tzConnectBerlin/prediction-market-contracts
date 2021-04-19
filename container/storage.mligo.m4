@@ -3,7 +3,7 @@ m4_changequote(«,») m4_dnl
 m4_ifdef(«STORAGE»,,«m4_define(«STORAGE»,1) m4_dnl
 m4_include(m4_helpers.m4) m4_dnl
 m4_loadfile(../common/framework,lazy_endpoint.mligo.m4) m4_dnl
-m4_loadfile(../common,business_interface.mligo.m4) m4_dnl
+m4_loadfile(../common,business_interface_root.mligo.m4) m4_dnl
 m4_loadfile(.,initial_business_storage.mligo.m4) m4_dnl
 
 //

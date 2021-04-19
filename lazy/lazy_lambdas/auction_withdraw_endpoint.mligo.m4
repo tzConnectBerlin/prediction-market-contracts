@@ -5,7 +5,7 @@ m4_include(m4_helpers.m4) m4_dnl
 m4_loadfile(../../common,business_interface_root.mligo.m4) m4_dnl
 m4_loadfile(../../common/framework,lazy_endpoint.mligo.m4) m4_dnl
 m4_loadfile(../../common/framework,lazy_typing.mligo.m4) m4_dnl
-m4_loadfile(..,market_withdraw.mligo.m4) m4_dnl
+m4_loadfile(..,auction_withdraw.mligo.m4) m4_dnl
 
 LAZY_TYPE(market_id)
 
