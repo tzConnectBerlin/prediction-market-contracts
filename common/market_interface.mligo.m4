@@ -138,10 +138,25 @@ type market_trade_params =
 	amount : nat;
 }
 
-type directional_market_trade_params =
+type token_type =
+	| Yes
+	| No
+
+type token_trade_params =
 [@layout:comb]
 {
-	token_to_sell : bool;
+	token_to_sell : token_type;
+	params : market_trade_params;
+}
+
+type direction =
+	| PayIn
+	| PayOut
+
+type directional_params =
+[@layout:comb]
+{
+	direction : direction;
 	params : market_trade_params;
 }
 

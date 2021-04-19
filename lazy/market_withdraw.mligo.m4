@@ -74,6 +74,33 @@ let transfer_auction_tokens ( args, auction_withdraw_numbers, token_storage : tr
 		amount = auction_withdraw_numbers.quantity;
 	}, token_storage )
 
+let withdraw_lqt_reward_tokens ( lqt_provider_id, last_update, bootstrapped_market_data, token_storage :
+		lqt_provider_id * nat * bootstrapped_market_data * token_storage ) :
+		bootstrapped_market_data * token_storage * nat =
+	let provider_address = lqt_provider_id.originator in
+	let level = get_current_liquidity_activity_level bootstrapped_market_data in
+	let market_id = lqt_provider_id.market_id in
+	let lqt_token_id = get_liquidity_token_id market_id in
+	let lqt_reward_token_id = get_liquidity_reward_token_id market_id in
+	//
+	// Update supply
+	let ( bootstrapped_market_data, new_supply_map ) = update_lqt_reward_supply_internal ( {
+		level = level;
+		lqt_token_id = lqt_token_id;
+		lqt_reward_token_id = lqt_reward_token_id;
+	}, bootstrapped_market_data, token_storage.supply_map ) in
+	let token_storage = { token_storage with supply_map = new_supply_map } in
+	//
+	// Withdraw tokens from updated supply
+	let token_storage = withdraw_lqt_reward_tokens_internal ( {
+		level = level;
+		last_update = last_update;
+		provider_address = provider_address;
+		lqt_token_id = lqt_token_id;
+		lqt_reward_token_id = lqt_reward_token_id;
+	}, token_storage ) in
+	bootstrapped_market_data, token_storage, level
+
 let withdraw_reserve_tokens ( market_id, business_storage : market_id * business_storage ) : business_storage =
 	let caller = Tezos.sender in
 	let lqt_provider_id : lqt_provider_id = {
@@ -95,7 +122,7 @@ let withdraw_reserve_tokens ( market_id, business_storage : market_id * business
 				market_id = market_id;
 			}, auction_withdraw_numbers, business_storage.tokens ) ),
 			bootstrapped_market_data.bootstrapped_at_block )
-		| Liquidity_reward_updated_at l -> ( business_storage.tokens, l ) in	
+		| Liquidity_reward_updated_at l -> ( business_storage.tokens, l ) in
 		let ( bootstrapped_market_data, token_storage, update_level ) = withdraw_lqt_reward_tokens ( lqt_provider_id, liquidity_reward_updated_at, bootstrapped_market_data, token_storage ) in
 		let liquidity_provider_map = save_lqt_provider_update_level ( lqt_provider_id, update_level, liquidity_provider_map ) in
 		let market_data = save_bootstrapped_market_data ( bootstrapped_market_data, market_data ) in

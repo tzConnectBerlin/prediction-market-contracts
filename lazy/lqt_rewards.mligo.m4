@@ -6,6 +6,8 @@ m4_loadfile(.,maths.mligo.m4) m4_dnl
 
 // FIXME this needs to take into account if and when the market was resolved!
 
+let err_BET_NOT_WITHDRAWN = "Withdraw auction bet before further liquidity operations"
+
 let get_current_liquidity_activity_level ( bootstrapped_market_data : bootstrapped_market_data ) : nat =
 	match bootstrapped_market_data.resolution with
 	| None -> Tezos.level
@@ -40,35 +42,55 @@ let update_lqt_reward_supply ( market_id, bootstrapped_market_data, supply_map :
 		lqt_reward_token_id = lqt_reward_token_id;
 	}, bootstrapped_market_data, supply_map )
 
-let withdraw_lqt_reward_tokens ( lqt_provider_id, last_update, bootstrapped_market_data, token_storage :
-		lqt_provider_id * nat * bootstrapped_market_data * token_storage ) :
-		bootstrapped_market_data * token_storage * nat =
-	let provider_address = lqt_provider_id.originator in
+type withdraw_lqt_reward_tokens_internal_args =
+{
+	level : nat;
+	last_update : nat;
+	provider_address : address;
+	lqt_token_id : token_id;
+	lqt_reward_token_id : token_id;
+}
+
+let withdraw_lqt_reward_tokens_internal ( args, token_storage : withdraw_lqt_reward_tokens_internal_args * token_storage ) : token_storage =
+	let blocks_elapsed = sub_nat_nat args.level args.last_update err_INTERNAL in
+	let lqt_balance = get_token_balance ( { 
+		token_id = args.lqt_token_id;
+		owner = args.provider_address;
+	}, token_storage.ledger_map ) in
+	let lqt_reward_to_withdraw = mul_nat_nat blocks_elapsed lqt_balance in
+	token_release_to_account ( {
+		token_id = args.lqt_reward_token_id;
+		amount = lqt_reward_to_withdraw;
+		dst = args.provider_address;
+	}, token_storage )
+
+let update_lqt_reward ( lqt_provider_id, bootstrapped_market_data, liquidity_provider_map, token_storage :
+		lqt_provider_id * bootstrapped_market_data * liquidity_provider_map * token_storage ) :
+		bootstrapped_market_data * liquidity_provider_map * token_storage =
 	let level = get_current_liquidity_activity_level bootstrapped_market_data in
-	let market_id = lqt_provider_id.market_id in
-	let lqt_token_id = get_liquidity_token_id market_id in
-	let lqt_reward_token_id = get_liquidity_reward_token_id market_id in
-	//
-	// Update supply
+	let lqt_token_id = get_liquidity_token_id lqt_provider_id.market_id in
+	let lqt_reward_token_id = get_liquidity_reward_token_id lqt_provider_id.market_id in
 	let ( bootstrapped_market_data, new_supply_map ) = update_lqt_reward_supply_internal ( {
 		level = level;
 		lqt_token_id = lqt_token_id;
 		lqt_reward_token_id = lqt_reward_token_id;
 	}, bootstrapped_market_data, token_storage.supply_map ) in
 	let token_storage = { token_storage with supply_map = new_supply_map } in
-	//
-	// Withdraw tokens from updated supply
-	let blocks_elapsed = sub_nat_nat level last_update err_INTERNAL in
-	let lqt_balance = get_token_balance ( { 
-		token_id = lqt_token_id;
-		owner = provider_address;
-	}, token_storage.ledger_map ) in
-	let lqt_reward_to_withdraw = mul_nat_nat blocks_elapsed lqt_balance in
-	let token_storage = token_release_to_account ( {
-		token_id = lqt_reward_token_id;
-		amount = lqt_reward_to_withdraw;
-		dst = provider_address;
-	}, token_storage ) in
-	bootstrapped_market_data, token_storage, level
+	let new_liquidity_provider_map = save_lqt_provider_update_level ( lqt_provider_id, level, liquidity_provider_map ) in
+	match ( Big_map.find_opt lqt_provider_id liquidity_provider_map ) with
+	| None -> ( bootstrapped_market_data, new_liquidity_provider_map, token_storage )
+	| Some e -> ( match e with
+		| Bet _ -> ( failwith err_BET_NOT_WITHDRAWN : bootstrapped_market_data * liquidity_provider_map * token_storage )
+		| Liquidity_reward_updated_at last_update -> (
+			let token_storage = withdraw_lqt_reward_tokens_internal ( {
+				level = level;
+				last_update = last_update;
+				provider_address = lqt_provider_id.originator;
+				lqt_token_id = lqt_token_id;
+				lqt_reward_token_id = lqt_reward_token_id;
+			}, token_storage ) in
+			( bootstrapped_market_data, new_liquidity_provider_map, token_storage )
+		)
+	)
 
 ») m4_dnl
