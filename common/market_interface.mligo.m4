@@ -28,10 +28,14 @@ type currency_pool =
 	auction_reward_currency_pool : nat;
 }
 
+type outcome_type =
+	| Yes
+	| No
+
 type resolution_data =
 [@layout:comb]
 {
-	winning_prediction : bool; // Which outcome won - yes or no === true or false
+	winning_prediction : outcome_type;
 	resolved_at_block : nat;
 }
 
@@ -128,7 +132,7 @@ type resolve_market_params =
 [@layout:comb]
 {
 	market_id : market_id;
-	winning_prediction : bool;
+	winning_prediction : outcome_type;
 }
 
 type market_trade_params =
@@ -138,14 +142,10 @@ type market_trade_params =
 	amount : nat;
 }
 
-type token_type =
-	| Yes
-	| No
-
 type token_trade_params =
 [@layout:comb]
 {
-	token_to_sell : token_type;
+	token_to_sell : outcome_type;
 	params : market_trade_params;
 }
 

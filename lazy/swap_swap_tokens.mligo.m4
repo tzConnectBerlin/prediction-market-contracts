@@ -16,7 +16,7 @@ type swap_token_ids =
 	token_out_id : token_id;
 }
 
-let get_swap_token_ids ( market_id, token_in_type : market_id * token_type ) : swap_token_ids =
+let get_swap_token_ids ( market_id, token_in_type : market_id * outcome_type ) : swap_token_ids =
 	let yes_token_id = get_yes_token_id market_id in
 	let no_token_id = get_no_token_id market_id in
 	match token_in_type with

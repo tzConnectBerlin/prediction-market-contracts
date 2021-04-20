@@ -58,10 +58,9 @@ let claim_market_rewards ( market_id, business_storage : market_id * business_st
 	let liquidity_reward_payout_numbers, lqt_reward_balance = get_tokenpool_payout ( acct, liquidity_reward_token_id, bootstrapped_market_data.currency_pool.liquidity_reward_currency_pool, token_storage ) in
 	let auction_reward_token_id = get_auction_reward_token_id market_id in
 	let auction_reward_payout_numbers, auction_reward_balance = get_tokenpool_payout ( acct, auction_reward_token_id, bootstrapped_market_data.currency_pool.auction_reward_currency_pool, token_storage ) in
-	let winning_token_id = if ( resolution_data.winning_prediction ) then
-		pool_token_ids.yes_token_id
-	else
-		pool_token_ids.no_token_id in
+	let winning_token_id = match resolution_data.winning_prediction with
+	| Yes -> pool_token_ids.yes_token_id
+	| No -> pool_token_ids.no_token_id in
 	let winning_token_payout_numbers, winning_token_balance = get_tokenpool_payout ( acct, winning_token_id, bootstrapped_market_data.currency_pool.market_currency_pool, token_storage ) in
 	//
 	// Burn tokens and update currency pool record
