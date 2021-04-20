@@ -34,13 +34,13 @@ type container_storage =
 
 // Initial storage for deployment
 
-//let initial_storage : container_storage =
-//{
-//	lambda_repository = {
-//		creator = Some(Tezos.sender);
-//		lambda_map = ( Big_map.empty : lambda_map );
-//	};
-//	business_storage = initial_business_storage;
-//}
+let initial_storage : container_storage =
+{
+	lambda_repository = {
+		creator = Some(Tezos.sender);
+		lambda_map = ( Big_map.empty : lambda_map );
+	};
+	business_storage = initial_business_storage;
+}
 
 »)
