@@ -1,6 +1,6 @@
 #!/bin/bash
 
-account_name="scrooge"
+account_name="alice"
 contract_name="binary_pm"
 burn_cap=2.0
 
