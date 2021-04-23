@@ -1,4 +1,4 @@
-# Storage and metadata
+# Storage and internal behavior
 This document describes the structure and semantics of the contract storage, as described in LIGO.
 
 ## Storage shape
@@ -8,12 +8,12 @@ This document describes the structure and semantics of the contract storage, as 
   * `tokens` : Storage root for built-in FA2 token functionality; note that FA2 functionality is at the moment incomplete
     * `ledger_map : Big_map` : Map of ledger entries
 	  * Key
-	    * `owner : address` : Address of the token holder
+	    * `owner : address`
 		* `token_id : nat`
 	  * Value (`nat`) : Ledger balance
 	* `supply_map : Big_map` : Map of token supply entries
 	  * Key (`nat`) : Token identifier
-	  * `total_supply : nat` : Total supply minted of the token
+	  * `total_supply : nat` : Total supply minted of the token (including reserve)
 	  * `in_reserve : nat` : Pool of minted but unclaimed tokens
   * `markets` : Storage root for prediction market data
     * `market_map : Big_map` : Map of all prediction markets
@@ -48,13 +48,22 @@ This document describes the structure and semantics of the contract storage, as 
 	  * Key
 	    * `originator : address` : Address of the liquidity provider
 		* `market_id : nat` : The prediction market for which liquidity is provided
-	  * Union type of the following possibilities
-	    * `Liquidity_reward_updated_at : nat` : The last block level where this liquidity provider has had their reward tokens withdrawn.
-		* `Bet` : If the liquidity provider had participated in the auction, and not withdrawn their allocations yet, this type holds the details of their bet.
-		  * `predicted_probability : fixedpoint` : A fixed point representation of the probability of a Yes outcome predicted in the bet.
-		  * `quantity : nat` : The amount of currency tokens placed down for the bet.
+	  * Union type of the following options
+	    * `Liquidity_reward_updated_at : nat` : Block level where this liquidity provider has had their reward tokens withdrawn
+		* `Bet` : If the liquidity provider had participated in the auction, and not withdrawn their allocations yet, this type holds the details of their bet
+		  * `predicted_probability : fixedpoint` : A fixed point representation of the probability of a Yes outcome predicted in the bet
+		  * `quantity : nat` : The amount of currency tokens placed down for the bet
 
 ## Details
+
+### Fixed point numbers
+Fractional numbers and those requiring high precision are handled in a base2 fixed point representation.
+
+Fixed point numbers are represented by the `fixedpoint` type that doesn't unify with `nat` in LIGO, but compiles to a simple `nat` in Michelson. This is to make interoperability simple, while ensuring correct semantics at compile time.
+
+The conversion from `nat` to `fixedpoint` is a left-shift by 64 bits, while conversion back (essentially implementing a floor function) is a right-shift by the same.
+
+Fixed point 1.0 is represented as 2^64.
 
 ### Token-market mapping
 Tokens and markets are mapped to each other in a deterministic fashion. The basis of a market's token identifiers is gained by left-shifting the market id by 3.

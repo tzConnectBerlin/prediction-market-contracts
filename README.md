@@ -1,3 +1,7 @@
+# Binary prediction market
+
+See documentation in /docs.
+
 ## To build:
 
 * $ cd build
@@ -8,3 +12,4 @@
 * First run FlextesaPlayground ( https://github.com/dani-jozsef/FlextesaPlayground )
 * $ cd build
 * $ ./install.sh
+

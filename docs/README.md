@@ -46,20 +46,17 @@ If the market is resolved during the auction phase, the auction is immediately c
 Once the market had been cleared, participants can claim their winnings in the market's currency token. These winnings are calculated from the sum total of their holdings in the winning outcome token, pool liquidity token, and liquidity provider reward tokens.
 
 ## Liquidity provider incentives
-While the liquidity pool maths includes a fee structure for incentivizing liquidity providers, in the domain of prediction markets, this approach has a major flaw. As the market nears resolution, the holdings of the eventual winning token will likely decrease in the pool compared to the losing token, the liquidity providers' so-called impermanent loss becoming a permanent loss, unless the market is resolved to the more unlikely outcome.
+Two fee structures are in place to reward and incentivize liquidity providers, and encourage them to provide liquidity until the market resolution.
 
-To create an incentive for market participants to take part in the auction phase and seed the pool, and to continue to provide liquidity up till the resolution of the market, additional reward mechanics have been implemented.
+### Swap fee - liquidity pool reward
+Following the behavior of Uniswap v1 liquidity pools, a small fee is taken from each swap operation, raising the effective K of the pool. This fee is denominated in the outcome token being sold. This leads to the liquidity tokens appreciating over time in comparison to the outcome tokens, with continued trading in the pool.
 
-### Swap fees
+This approach has a major flaw in the domain of prediction markets. As the market nears resolution, the holdings of the eventual winning token will likely decrease in the pool compared to the losing token, the liquidity providers' so-called impermanent loss becoming a permanent loss, unless the market is resolved to the more unlikely outcome.
 
-Following the behavior of Uniswap v1 liquidity pools, a small fee is taken from each swap operation, raising the effective K of the pool. This fee is denominated in the outcome token being sold.
-
-This leads to the liquidity tokens appreciating over time in comparison to the outcome tokens, with continued trading in the pool.
-
-### Provider reward tokens
-
-Another fee is taken from the minting and burning of outcome tokens. This fee is denominated in the market currency token, and is effected by a spread between the mint and burn prices of outcome tokens. The currency collected through this mint / burn fee is split into two reward pools in a 20% / 80% ratio.
+### Mint fee - time-proportional and seeding reward
+To create an incentive for market participants to take part in the auction phase and seed the pool, and to continue to provide liquidity up till the resolution of the market, additional reward mechanics have been implemented. A fee is taken from the minting and burning of outcome tokens. This fee is denominated in the market currency token, and is effected by a spread between the mint and burn prices of outcome tokens. The currency collected through this mint / burn fee is split into two reward pools in a 20% / 80% ratio.
 
 20% goes to rewarding auction participants according to the relative size of their bets, to counterbalance the risk of taking part in a nascent, unseeded market and helping it to come into existence.
 
 80% of the fees go to rewarding liquidity providers for continuing to hold tokens in the liquidity pool. Each block, every liquidity provider is allocated newly minted liquidity reward tokens relative to the liquidity they are providing. (Naturally, these rewards are calculated in a lazy manner, whenever a participant executes a liquidity operation.) These reward tokens start to accrue as the market is cleared, and continue accruing until the market is finally resolved.
+
