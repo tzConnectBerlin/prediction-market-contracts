@@ -1,6 +1,10 @@
 # Binary prediction market
 
-See documentation in /docs.
+For detailed description, see the following documentation:
+
+* [Overview](docs/overview.md)
+* [Entrypoints](docs/entrypoints.md)
+* [Storage](docs/storage.md)
 
 ## To build:
 
