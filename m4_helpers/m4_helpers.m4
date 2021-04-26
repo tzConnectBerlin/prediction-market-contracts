@@ -8,4 +8,5 @@ m4_include(M4_WORKING_DIR/$2) m4_dnl
 m4_popdef(«M4_WORKING_DIR») m4_dnl
 ») m4_dnl
 m4_define(«m4_bc»,«m4_esyscmd(«bash -c "bc <<< '$1' | tr -d '\n'"»)») m4_dnl
+m4_define(«m4_debug_err»,«m4_ifdef(«RELEASE»,«err_INTERNAL»,$1)») m4_dnl
 ») m4_dnl

@@ -24,16 +24,16 @@ type auction_withdraw_numbers =
 
 let do_auction_withdraw_calculations ( bet, bootstrapped_market_data : bet * bootstrapped_market_data ) : auction_withdraw_numbers =
 	let bootstrap_yes_probability = bootstrapped_market_data.bootstrap_yes_probability in
-	let bootstrap_no_probability = complement bootstrap_yes_probability err_INTERNAL in
+	let bootstrap_no_probability = complement bootstrap_yes_probability m4_debug_err("bootstrap_no_probability@mint_do_auction_withdraw_calculationstokens@auction_withdraw.mligo.m4") in
 	let bet_yes_preference = calculate_yes_preference bet in
 	let bet_no_preference = calculate_no_preference bet in
 	let bet_uniswap_contribution = ( min_fp bet_yes_preference bet_no_preference ) in
-	let yes_token_alloc = div_fp_fp_floor bet_yes_preference bootstrap_yes_probability err_INTERNAL in
-	let yes_token_contributed = div_fp_fp_floor bet_uniswap_contribution bootstrap_yes_probability err_INTERNAL in
-	let yes_token_withdrawable = sub_nat_nat yes_token_alloc yes_token_contributed err_INTERNAL in
-	let no_token_alloc = div_fp_fp_floor bet_no_preference bootstrap_no_probability err_INTERNAL in
-	let no_token_contributed = div_fp_fp_floor bet_uniswap_contribution bootstrap_no_probability err_INTERNAL in
-	let no_token_withdrawable = sub_nat_nat no_token_alloc no_token_contributed err_INTERNAL in
+	let yes_token_alloc = div_fp_fp_floor bet_yes_preference bootstrap_yes_probability m4_debug_err("yes_token_alloc@mint_do_auction_withdraw_calculationstokens@auction_withdraw.mligo.m4") in
+	let yes_token_contributed = div_fp_fp_floor bet_uniswap_contribution bootstrap_yes_probability m4_debug_err("yes_token_contributed@mint_do_auction_withdraw_calculationstokens@auction_withdraw.mligo.m4") in
+	let yes_token_withdrawable = sub_nat_nat yes_token_alloc yes_token_contributed m4_debug_err("yes_token_withdrawable@mint_do_auction_withdraw_calculationstokens@auction_withdraw.mligo.m4") in
+	let no_token_alloc = div_fp_fp_floor bet_no_preference bootstrap_no_probability m4_debug_err("no_token_alloc@mint_do_auction_withdraw_calculationstokens@auction_withdraw.mligo.m4") in
+	let no_token_contributed = div_fp_fp_floor bet_uniswap_contribution bootstrap_no_probability m4_debug_err("no_token_contributed@mint_do_auction_withdraw_calculationstokens@auction_withdraw.mligo.m4") in
+	let no_token_withdrawable = sub_nat_nat no_token_alloc no_token_contributed m4_debug_err("no_token_withdrawable@mint_do_auction_withdraw_calculationstokens@auction_withdraw.mligo.m4") in
 	{
 		quantity = bet.quantity;
 		liquidity_share = floor bet_uniswap_contribution;

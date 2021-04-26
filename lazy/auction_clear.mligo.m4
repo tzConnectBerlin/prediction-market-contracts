@@ -20,7 +20,7 @@ let check_auction_end_date ( auction_data : auction_data ) : unit =
 		unit
 
 let clearing_yes_probability ( auction_data : auction_data ) : fixedpoint =
-	div_fp_nat auction_data.yes_preference auction_data.quantity err_INTERNAL
+	div_fp_nat auction_data.yes_preference auction_data.quantity m4_debug_err("div_fp_nat@clearing_yes_probability@auction_clear.mligo.m4")
 
 type clearing_numbers =
 [@layout:comb]
@@ -34,9 +34,9 @@ type clearing_numbers =
 
 let do_clearing_calculations ( auction_data : auction_data ) : clearing_numbers =
 	let clearing_yes_probability = clearing_yes_probability auction_data in
-	let clearing_no_probability = complement clearing_yes_probability err_INTERNAL in
-	let yes_contributed_to_swap = div_fp_fp_floor auction_data.uniswap_contribution clearing_yes_probability err_INTERNAL in
-	let no_contributed_to_swap = div_fp_fp_floor auction_data.uniswap_contribution clearing_no_probability err_INTERNAL in
+	let clearing_no_probability = complement clearing_yes_probability m4_debug_err("clearing_no_probability@do_clearing_calculations@auction_clear.mligo.m4") in
+	let yes_contributed_to_swap = div_fp_fp_floor auction_data.uniswap_contribution clearing_yes_probability m4_debug_err("yes_contributed_to_swap@do_clearing_calculations@auction_clear.mligo.m4") in
+	let no_contributed_to_swap = div_fp_fp_floor auction_data.uniswap_contribution clearing_no_probability m4_debug_err("no_contributed_to_swap@do_clearing_calculations@auction_clear.mligo.m4") in
 	{
 		total_quantity = auction_data.quantity;
 		clearing_yes_probability = clearing_yes_probability;
@@ -49,8 +49,8 @@ let mint_tokens ( market_id, clearing_numbers, token_storage : market_id * clear
 	let self = Tezos.self_address in
 	let yes_token_id = get_yes_token_id market_id in
 	let no_token_id = get_no_token_id market_id in
-	let yes_token_in_reserve = sub_nat_nat clearing_numbers.total_quantity clearing_numbers.yes_contributed_to_swap err_INTERNAL in
-	let no_token_in_reserve = sub_nat_nat clearing_numbers.total_quantity clearing_numbers.no_contributed_to_swap err_INTERNAL in
+	let yes_token_in_reserve = sub_nat_nat clearing_numbers.total_quantity clearing_numbers.yes_contributed_to_swap m4_debug_err("yes_token_in_reserve@mint_tokens@auction_clear.mligo.m4") in
+	let no_token_in_reserve = sub_nat_nat clearing_numbers.total_quantity clearing_numbers.no_contributed_to_swap m4_debug_err("no_token_in_reserve@mint_tokens@auction_clear.mligo.m4") in
 	let token_storage = token_mint_to_account ( {
 		amount = clearing_numbers.yes_contributed_to_swap;
 		dst = self;

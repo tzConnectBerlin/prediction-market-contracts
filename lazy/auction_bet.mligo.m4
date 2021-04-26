@@ -29,7 +29,7 @@ let update_auction_totals ( old_bet, new_bet, auction_data : bet * bet * auction
 		predicted_probability = merged_predicted_probability;
 	} in
 	let new_uniswap_contribution = calculate_uniswap_contrib merged_bet in
-	let uniswap_contribution_delta = sub_fp_fp new_uniswap_contribution old_bet_details.uniswap_contribution err_INTERNAL in
+	let uniswap_contribution_delta = sub_fp_fp new_uniswap_contribution old_bet_details.uniswap_contribution m4_debug_err("uniswap_contribution_delta@update_auction_totals@auction_bet.mligo.m4") in
 	let total_quantity = add_nat_nat auction_data.quantity new_bet.quantity in
 	let total_yes_preference = add_fp_fp auction_data.yes_preference new_bet_yes_preference in
 	let total_uniswap_contribution = add_fp_fp auction_data.uniswap_contribution uniswap_contribution_delta in
