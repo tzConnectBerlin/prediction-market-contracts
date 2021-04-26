@@ -1,7 +1,7 @@
 #!/bin/bash
 
 account_name="alice"
-contract_name="binary_pm"
+contract_name="binarypm"
 burn_cap=2.0
 
 lazy_folder="./bin/lazy"
