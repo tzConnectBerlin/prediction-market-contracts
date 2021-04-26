@@ -36,6 +36,6 @@ let market_dispatcher ( action, container_storage : market_action * container_st
 let main ( action, container_storage : main_action * container_storage) : operation list * container_storage =
 	match action with
 	| Installer params -> installer_dispatch ( params, container_storage )
-	| Market params -> business_endpoint_dispatch ( "add", Bytes.pack params, container_storage )
+	| Market params -> market_dispatcher ( params, container_storage )
 
 ») m4_dnl
