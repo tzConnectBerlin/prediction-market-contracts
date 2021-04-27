@@ -16,8 +16,7 @@ let get_auction_bet_or_empty ( lqt_provider_id, liquidity_provider_map : lqt_pro
 	| Liquidity_reward_updated_at _ -> empty_bet
 	| Bet e -> e )
 
-//FIXME: This math may be simplifiable
-// First it should test correct, and then we can optimize over unit tests
+// FIXME: This math may be simplifiable
 let update_auction_totals ( old_bet, new_bet, auction_data : bet * bet * auction_data ) : bet * auction_data =
 	let old_bet_details = calculate_bet_details old_bet in
 	let merged_bet_quantity = add_nat_nat old_bet.quantity new_bet.quantity in
@@ -29,10 +28,9 @@ let update_auction_totals ( old_bet, new_bet, auction_data : bet * bet * auction
 		predicted_probability = merged_predicted_probability;
 	} in
 	let new_uniswap_contribution = calculate_uniswap_contrib merged_bet in
-	let uniswap_contribution_delta = sub_fp_fp new_uniswap_contribution old_bet_details.uniswap_contribution m4_debug_err("uniswap_contribution_delta@update_auction_totals@auction_bet.mligo.m4") in
+	let total_uniswap_contribution = add_fp_fp ( sub_fp_fp auction_data.uniswap_contribution old_bet_details.uniswap_contribution m4_debug_err("total_uniswap_contribution@update_auction_totals@auction_bet.mligo.m4") ) new_uniswap_contribution in
 	let total_quantity = add_nat_nat auction_data.quantity new_bet.quantity in
 	let total_yes_preference = add_fp_fp auction_data.yes_preference new_bet_yes_preference in
-	let total_uniswap_contribution = add_fp_fp auction_data.uniswap_contribution uniswap_contribution_delta in
 	( merged_bet, { auction_data with
 		quantity = total_quantity;
 		yes_preference = total_yes_preference;

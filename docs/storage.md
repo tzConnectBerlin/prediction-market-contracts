@@ -33,7 +33,7 @@ This document describes the structure and semantics of the contract storage, as 
 		  * `quantity : nat` : Total amount of currency tokens collected through bets
 		  * `yes_preference : fixedpoint` : Internal bookkeeping
 		  * `uniswap_contribution : fixedpoint` : Internal bookkeeping
-		* `MarketCleared` : The auction had been cleared, and the market is trading or had been resolved
+		* `MarketBootstrapped` : The auction had been cleared, and the market is trading or had been resolved
 		  * `currency_pool` : Running totals of collected currency
 		    * `market_currency_pool : nat` : Currency reserved for burning outcome tokens or exchange for winning tokens after market resolution
 			* `liquidity_reward_currency_pool : nat` : Currency reserved for rewarding liquidity providers proportional to keeping liquidity in the pool
