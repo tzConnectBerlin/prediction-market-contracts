@@ -1,8 +1,17 @@
 #!/bin/bash
 
-account_name="alice"
+if [[ -z "${1}" ]]; then
+echo "Usage: ./install.sh {tezos-client account name}"
+echo "Eg. ./compile-storage alice"
+exit 1
+fi
+
+account_name=${1}
 contract_name="binarypm"
 burn_cap=2.0
+
+account_addr=`./getaddr.sh ${account_name}`
+./build.sh ${account_addr}
 
 lazy_folder="./bin/lazy"
 lambda_files=${lazy_folder}/*.tz

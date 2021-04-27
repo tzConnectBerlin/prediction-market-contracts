@@ -6,14 +6,14 @@ For detailed description, see the following documentation:
 * [Entrypoints](docs/entrypoints.md)
 * [Storage](docs/storage.md)
 
-## To build:
+## To build only:
 
 * $ cd build
-* $ ./build.sh
+* $ ./build.sh {sender address}
 
-## To install:
+## To build and install:
 
 * First run FlextesaPlayground ( https://github.com/dani-jozsef/FlextesaPlayground )
 * $ cd build
-* $ ./install.sh
+* $ ./install.sh {tezos-client sender account name}
 
