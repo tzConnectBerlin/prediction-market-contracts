@@ -6,7 +6,6 @@ FA2 entrypoints are at the time unimplemented, making the internal tokens untran
 
 ## Market operations
 
-
 ## `%marketCreate`
 Create a new prediction market
 
@@ -42,7 +41,7 @@ Place a new bet in the auction (or augmenting an existing one)
   * `predicted_probability : fixedpoint` : A fixed point representation of the probability of a Yes outcome predicted in the bet
   * `quantity : nat` : The amount of currency tokens placed down for the bet
 
-## %auctionClear
+## `%auctionClear`
 Clear a market after the auction phase
 
 ### Call restrictions
@@ -53,7 +52,7 @@ Clear a market after the auction phase
 ### Arguments
 * `market_id : nat`
 
-## %auctionWithdraw
+## `%auctionWithdraw`
 Withdraw allocated tokens from a bet in the auction
 
 ### Call restrictions
@@ -63,7 +62,7 @@ Withdraw allocated tokens from a bet in the auction
 ### Arguments
 * `market_id : nat`
 
-## %marketEnterExit
+## `%marketEnterExit`
 Enter or exit the market by minting or burning outcome token pairs in exchange for market currency tokens
 
 ### Call restrictions
@@ -79,7 +78,7 @@ Enter or exit the market by minting or burning outcome token pairs in exchange f
   * `market_id : nat`
   * `amount : nat` : The amount of outcome token pairs to mint or burn
 
-## %swapTokens
+## `%swapTokens`
 Swap one outcome token through the liquidity pool for its opposing pair as a fixed input swap operation
 
 ### Call restrictions
@@ -95,7 +94,7 @@ Swap one outcome token through the liquidity pool for its opposing pair as a fix
   * `market_id : nat`
   * `amount : nat` : The amount of token to sell
 
-## %swapLiquidity
+## `%swapLiquidity`
 Add or remove liquidity from the liquidity pool at the current ratio
 
 ### Call restrictions
@@ -111,7 +110,7 @@ Add or remove liquidity from the liquidity pool at the current ratio
   * `market_id : nat`
   * `amount : nat` : The amount of liquidity tokens to receive or burn
 
-## %marketResolve
+## `%marketResolve`
 Resolve the market to a known outcome
 
 ### Call restrictions
@@ -125,7 +124,7 @@ Resolve the market to a known outcome
   * `Yes`
   * `No`
 
-## %claimWinnings
+## `%claimWinnings`
 Claim winnings in market currency tokens from a resolved market. The sum received is a composite payout from burning tokens of the following types held by the caller:
 * Winning outcome token
 * Pool liquidity token (converted to winning outcome token through a remove liquidity operation)
