@@ -12,6 +12,8 @@ m4_loadfile(.,auction.mligo.m4) m4_dnl
 m4_loadfile(.,payouts.mligo.m4) m4_dnl
 
 let err_CANT_CLEAR_BEFORE_END = "Can't clear market before auction end date"
+let err_MARKET_ILLIQUID = "Can't clear unhealthy market: no liquidity provided to pool"
+let err_MARKET_UNBALANCED = "Can't clear unhealthy market: only one outcome token provided to pool"
 
 let check_auction_end_date ( auction_data : auction_data ) : unit =
 	if ( Tezos.now < auction_data.auction_period_end ) then
@@ -44,6 +46,14 @@ let do_clearing_calculations ( auction_data : auction_data ) : clearing_numbers 
 		no_contributed_to_swap = no_contributed_to_swap;
 		lqt_in_swap = floor auction_data.uniswap_contribution;
 	}
+
+let check_market_health ( clearing_numbers : clearing_numbers ) : unit =
+	if ( clearing_numbers.lqt_in_swap = 0n ) then
+		failwith err_MARKET_ILLIQUID
+	else if ( ( clearing_numbers.yes_contributed_to_swap = 0n ) or ( clearing_numbers.no_contributed_to_swap = 0n ) ) then
+		failwith err_MARKET_UNBALANCED
+	else
+		unit
 
 let mint_tokens ( market_id, clearing_numbers, token_storage : market_id * clearing_numbers * token_storage ) : token_storage =
 	let self = Tezos.self_address in
@@ -85,6 +95,7 @@ let mint_tokens ( market_id, clearing_numbers, token_storage : market_id * clear
 
 let set_market_state_cleared ( market_id, auction_data, token_storage : market_id * auction_data * token_storage ) : bootstrapped_market_data * token_storage =
 	let clearing_numbers = do_clearing_calculations auction_data in
+	let _ = check_market_health clearing_numbers in
 	let currency_pool = split_revenue clearing_numbers.total_quantity in
 	let level = Tezos.level in
 	let bootstrapped_market_data : bootstrapped_market_data = {
