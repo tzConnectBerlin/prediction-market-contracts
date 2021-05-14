@@ -62,9 +62,9 @@ let enter_exit_market ( args, business_storage : directional_params * business_s
 		( pull_payment, bootstrapped_market_data, token_storage )
 	)
 	| PayOut -> (
+		let token_storage = burn_prediction_tokens ( Tezos.sender, args.params, token_storage ) in
 		let currency_payout_data = calculate_currency_payout ( args.params, bootstrapped_market_data.currency_pool.market_currency_pool, token_storage ) in
 		let push_payout = get_push_payout ( market_data.metadata.currency, currency_payout_data.currency_payout ) in
-		let token_storage = burn_prediction_tokens ( Tezos.sender, args.params, token_storage ) in
 		let bootstrapped_market_data = { bootstrapped_market_data with currency_pool.market_currency_pool = currency_payout_data.new_currency_pool } in
 		( push_payout, bootstrapped_market_data, token_storage )
 	) in
