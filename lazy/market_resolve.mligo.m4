@@ -18,7 +18,10 @@ let resolve_market ( resolve_market_params, business_storage : resolve_market_pa
 	let market_data = get_market ( resolve_market_params.market_id, market_map ) in
 	let _ = is_valid_adjudicator market_data.metadata in
 	let bootstrapped_market_data, token_storage = match market_data.state with
-	| AuctionRunning e -> set_market_state_cleared ( resolve_market_params.market_id, e, business_storage.tokens )
+	| AuctionRunning e -> (
+		let bootstrapped_market_data, token_storage, _ = set_market_state_cleared ( resolve_market_params.market_id, e, business_storage.tokens ) in
+		bootstrapped_market_data, token_storage
+	)
 	| MarketBootstrapped e -> ( e, business_storage.tokens ) in
 	let resolution_data = match bootstrapped_market_data.resolution with
 	| Some _ -> ( failwith err_MARKET_ALREADY_RESOLVED : resolution_data )

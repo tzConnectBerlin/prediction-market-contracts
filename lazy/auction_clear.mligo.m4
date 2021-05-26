@@ -83,19 +83,14 @@ let mint_tokens ( market_id, clearing_numbers, token_storage : market_id * clear
 		amount = clearing_numbers.lqt_in_swap;
 		token_id = ( get_liquidity_token_id market_id );
 	}, supply_map ) in
-//	let supply_map = token_mint_to_reserve ( {
-//		amount = clearing_numbers.lqt_in_swap;
-//		token_id = ( get_liquidity_reward_token_id market_id );
-//	}, supply_map ) in
 	let supply_map = token_mint_to_reserve ( {
 		amount = clearing_numbers.total_quantity;
 		token_id = ( get_auction_reward_token_id market_id );
 	}, supply_map ) in
 	{ token_storage with supply_map = supply_map; }
 
-let set_market_state_cleared ( market_id, auction_data, token_storage : market_id * auction_data * token_storage ) : bootstrapped_market_data * token_storage =
+let set_market_state_cleared ( market_id, auction_data, token_storage : market_id * auction_data * token_storage ) : bootstrapped_market_data * token_storage * clearing_numbers =
 	let clearing_numbers = do_clearing_calculations auction_data in
-	let _ = check_market_health clearing_numbers in
 	let currency_pool = split_revenue clearing_numbers.total_quantity in
 	let level = Tezos.level in
 	let bootstrapped_market_data : bootstrapped_market_data = {
@@ -106,14 +101,15 @@ let set_market_state_cleared ( market_id, auction_data, token_storage : market_i
 		resolution = ( None : resolution_data option );
 	} in
 	let token_storage = mint_tokens ( market_id, clearing_numbers, token_storage ) in
-	bootstrapped_market_data, token_storage
+	bootstrapped_market_data, token_storage, clearing_numbers
 
 let clear_auction ( market_id, business_storage : market_id * business_storage ) : operation list * business_storage =
 	let market_map = business_storage.markets.market_map in
 	let market_data = get_market ( market_id, market_map ) in
 	let auction_data = get_auction_data market_data in
 	let _ = check_auction_end_date auction_data in
-	let bootstrapped_market_data, token_storage = set_market_state_cleared ( market_id, auction_data, business_storage.tokens ) in
+	let bootstrapped_market_data, token_storage, clearing_numbers = set_market_state_cleared ( market_id, auction_data, business_storage.tokens ) in
+	let _ = check_market_health clearing_numbers in
 	let market_data = save_bootstrapped_market_data ( bootstrapped_market_data, market_data ) in
 	let market_map = save_market ( market_id, market_data, market_map ) in
 	( [] : operation list ), { business_storage with
