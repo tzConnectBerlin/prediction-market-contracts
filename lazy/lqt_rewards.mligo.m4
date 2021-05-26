@@ -4,8 +4,6 @@ m4_ifdef(«LQT_REWARDS»,,«m4_define(«LQT_REWARDS»,1) m4_dnl
 m4_include(m4_helpers.m4) m4_dnl
 m4_loadfile(.,maths.mligo.m4) m4_dnl
 
-// FIXME this needs to take into account if and when the market was resolved!
-
 let err_BET_NOT_WITHDRAWN = "Withdraw auction bet before further liquidity operations"
 
 let get_current_liquidity_activity_level ( bootstrapped_market_data : bootstrapped_market_data ) : nat =
@@ -25,6 +23,7 @@ type update_lqt_reward_supply_internal_args =
 
 let update_lqt_reward_supply_internal ( args, bootstrapped_market_data, supply_map : update_lqt_reward_supply_internal_args * bootstrapped_market_data * supply_map ) : bootstrapped_market_data * supply_map =
 	let blocks_elapsed = sub_nat_nat args.level bootstrapped_market_data.liquidity_reward_supply_updated_at_block m4_debug_err("blocks_elapsed@update_lqt_reward_supply_internal@lqt_rewards.mligo.m4") in
+	let blocks_elapsed = add_nat_nat blocks_elapsed 1n in // We count the clearing (0th) block as 1 block!
 	let lqt_supply = get_token_supply ( args.lqt_token_id, supply_map ) in
 	let lqt_reward_to_mint = mul_nat_nat blocks_elapsed lqt_supply in
 	let supply_map = token_mint_to_reserve ( {
@@ -53,6 +52,7 @@ type withdraw_lqt_reward_tokens_internal_args =
 
 let withdraw_lqt_reward_tokens_internal ( args, token_storage : withdraw_lqt_reward_tokens_internal_args * token_storage ) : token_storage =
 	let blocks_elapsed = sub_nat_nat args.level args.last_update m4_debug_err("blocks_elapsed@withdraw_lqt_reward_tokens_internal@lqt_rewards.mligo.m4") in
+	let blocks_elapsed = add_nat_nat blocks_elapsed 1n in // We count the clearing (0th) block as 1 block!
 	let lqt_balance = get_token_balance ( { 
 		token_id = args.lqt_token_id;
 		owner = args.provider_address;
