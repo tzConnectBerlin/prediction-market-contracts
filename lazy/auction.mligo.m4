@@ -48,6 +48,9 @@ let save_auction_data ( auction_data, market_data : auction_data * market_data )
 	{ market_data with state = AuctionRunning(auction_data); }
 
 let save_auction_bet ( lqt_provider_id, bet, liquidity_provider_map : lqt_provider_id * bet * liquidity_provider_map ) : liquidity_provider_map =
-	Big_map.update lqt_provider_id ( Some( Bet( bet ) ) ) liquidity_provider_map
+	if ( bet.quantity = 0n ) then
+		( failwith err_INVALID_AMOUNT : liquidity_provider_map )
+	else
+		Big_map.update lqt_provider_id ( Some( Bet( bet ) ) ) liquidity_provider_map
 
 ») m4_dnl
