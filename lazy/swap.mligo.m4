@@ -23,13 +23,20 @@ type liquidity_pool =
 }
 
 let calc_liquidity_to_tokens ( lqt_amount, liquidity_pool : nat * liquidity_pool ) : token_pair =
-	let lqt_ratio = div_nat_nat lqt_amount liquidity_pool.liquidity_supply m4_debug_err("lqt_ratio@calc_liquidity_to_tokens@swap.mligo.m4") in
-	let token_a = floor ( mul_fp_nat lqt_ratio liquidity_pool.reserves.token_a ) in
-	let token_b = floor ( mul_fp_nat lqt_ratio liquidity_pool.reserves.token_b ) in
-	{
-		token_a = token_a;
-		token_b = token_b;
-	}
+	if ( lqt_amount = 0n ) then
+		{
+			token_a = 0n;
+			token_b = 0n;
+		}
+	else (
+		let lqt_ratio = div_nat_nat lqt_amount liquidity_pool.liquidity_supply m4_debug_err("lqt_ratio@calc_liquidity_to_tokens@swap.mligo.m4") in
+		let token_a = floor ( mul_fp_nat lqt_ratio liquidity_pool.reserves.token_a ) in
+		let token_b = floor ( mul_fp_nat lqt_ratio liquidity_pool.reserves.token_b ) in
+		{
+			token_a = token_a;
+			token_b = token_b;
+		}
+	)
 
 let calc_fixed_input_swap ( token_a_in, token_pair : nat * token_pair ) : nat =
 	let numerator = mul_nat_nat ( mul_nat_nat token_a_in token_pair.token_b ) swap_fee_numerator in
