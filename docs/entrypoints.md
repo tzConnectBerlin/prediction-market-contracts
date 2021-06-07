@@ -90,9 +90,10 @@ Swap one outcome token through the liquidity pool for its opposing pair as a fix
 * `token_to_sell` : Union type of the following options
   * `Yes`
   * `No`
-* `params`
+* `trade`
   * `market_id : nat`
   * `amount : nat` : The amount of token to sell
+* `slippage_control : nat` : Minimum amount of bought token accepted
 
 ## `%swapLiquidity`
 Add or remove liquidity from the liquidity pool at the current ratio
@@ -103,12 +104,16 @@ Add or remove liquidity from the liquidity pool at the current ratio
 * The market must not have been resolved
 
 ### Arguments
-* `direction` : Union type of the following options
-  * `PayIn` : Add liquidity to the pool
-  * `PayOut` : Remove liquidity from the pool
 * `params`
-  * `market_id : nat`
-  * `amount : nat` : The amount of liquidity tokens to receive or burn
+  * `direction` : Union type of the following options
+    * `PayIn` : Add liquidity to the pool
+    * `PayOut` : Remove liquidity from the pool
+  * `trade`
+    * `market_id : nat`
+    * `amount : nat` : The amount of liquidity tokens to receive or burn
+* `slippage_control` : Minimum token amounts for removing liquidity / Maximum amounts for adding
+  * `token_a : nat` : Minimum / maximum amount of Yes token
+  * `token_b : nat` : Minimum / maximum amount of No token
 
 ## `%marketResolve`
 Resolve the market to a known outcome
