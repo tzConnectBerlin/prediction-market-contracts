@@ -109,7 +109,7 @@ let withdraw_reserve_tokens ( market_id, business_storage : market_id * business
 	} in
 	let liquidity_provider_map = business_storage.markets.liquidity_provider_map in
 	match ( Big_map.find_opt lqt_provider_id liquidity_provider_map ) with
-	| None -> business_storage
+	| None -> ( failwith err_NOT_A_LIQUIDITY_PROVIDER : business_storage )
 	| Some lqt_provider_details -> (
 		let market_map = business_storage.markets.market_map in
 		let market_data = get_market ( market_id, market_map ) in
