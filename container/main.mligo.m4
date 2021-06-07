@@ -13,7 +13,7 @@ type market_action =
 	| AuctionWithdraw of market_id
 	| MarketEnterExit of directional_params
 	| SwapTokens of token_trade_params
-	| SwapLiquidity of directional_params
+	| SwapLiquidity of move_liquidity_params
 	| MarketResolve of resolve_market_params
 	| ClaimWinnings of market_id
 

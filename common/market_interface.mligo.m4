@@ -146,7 +146,8 @@ type token_trade_params =
 [@layout:comb]
 {
 	token_to_sell : outcome_type;
-	params : market_trade_params;
+	trade : market_trade_params;
+	slippage_control : nat;
 }
 
 type direction =
@@ -157,7 +158,21 @@ type directional_params =
 [@layout:comb]
 {
 	direction : direction;
-	params : market_trade_params;
+	trade : market_trade_params;
+}
+
+type token_pair =
+[@layout:comb]
+{
+	token_a : nat; // Yes token
+	token_b : nat; // No token
+}
+
+type move_liquidity_params =
+[@layout:comb]
+{
+	params : directional_params;
+	slippage_control : token_pair;
 }
 
 ») m4_dnl

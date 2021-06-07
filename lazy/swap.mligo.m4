@@ -5,15 +5,10 @@ m4_include(m4_helpers.m4) m4_dnl
 m4_loadfile(.,maths.mligo.m4) m4_dnl
 m4_loadfile(.,common_error.mligo.m4) m4_dnl
 
+let err_SLIPPAGE_EXCEEDED = "Slippage exceeded, aborting transaction"
+
 let swap_fee_numerator = 997n (* 0.3% fee *)
 let swap_fee_denominator = 1000n
-
-type token_pair =
-[@layout:comb]
-{
-	token_a : nat;
-	token_b : nat;
-}
 
 type liquidity_pool =
 [@layout:comb]
