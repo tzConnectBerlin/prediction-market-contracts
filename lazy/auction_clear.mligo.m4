@@ -37,8 +37,8 @@ type clearing_numbers =
 let do_clearing_calculations ( auction_data : auction_data ) : clearing_numbers =
 	let clearing_yes_probability = clearing_yes_probability auction_data in
 	let clearing_no_probability = complement clearing_yes_probability m4_debug_err("clearing_no_probability@do_clearing_calculations@auction_clear.mligo.m4") in
-	let yes_contributed_to_swap = div_fp_fp_floor auction_data.uniswap_contribution clearing_yes_probability m4_debug_err("yes_contributed_to_swap@do_clearing_calculations@auction_clear.mligo.m4") in
-	let no_contributed_to_swap = div_fp_fp_floor auction_data.uniswap_contribution clearing_no_probability m4_debug_err("no_contributed_to_swap@do_clearing_calculations@auction_clear.mligo.m4") in
+	let yes_contributed_to_swap = div_fp_fp_floor auction_data.uniswap_contribution clearing_yes_probability m4_debug_err(err_MARKET_ILLIQUID) in
+	let no_contributed_to_swap = div_fp_fp_floor auction_data.uniswap_contribution clearing_no_probability m4_debug_err(err_MARKET_ILLIQUID) in
 	{
 		total_quantity = auction_data.quantity;
 		clearing_yes_probability = clearing_yes_probability;
