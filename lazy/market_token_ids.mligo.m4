@@ -25,7 +25,7 @@ let get_liquidity_token_id ( market_id : market_id ) : token_id =
 	add_nat_nat 2n ( get_base_token_id_for_market market_id )
 
 [@inline]
-let get_auction_reward_token_id ( market_id : market_id ) : token_id =
+let get_creator_reward_token_id ( market_id : market_id ) : token_id =
 	add_nat_nat 3n ( get_base_token_id_for_market market_id )
 
 [@inline]

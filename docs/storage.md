@@ -37,7 +37,7 @@ This document describes the structure and semantics of the contract storage, as 
 		  * `currency_pool` : Running totals of collected currency
 		    * `market_currency_pool : nat` : Currency reserved for burning outcome tokens or exchange for winning tokens after market resolution
 			* `liquidity_reward_currency_pool : nat` : Currency reserved for rewarding liquidity providers proportional to keeping liquidity in the pool
-			* `auction_reward_currency_pool : nat` : Currency reserved for rewarding auction participants
+			* `creator_reward_currency_pool : nat` : Currency reserved for rewarding the market creator
 		  * `bootstrap_yes_probability : fixedpoint` : Predicted probability of Yes outcome at the point of market clearing. Used for calculating auction withdrawals
 		  * `bootstrapped_at_block : nat` : Block level at which the market had been cleared and trading began
 		  * `liquidity_reward_supply_updated_at_block : nat` : Block level at which the liquidity reward token supply had last been updated

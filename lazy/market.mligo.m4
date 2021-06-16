@@ -28,7 +28,7 @@ let increment_currency_pool ( currency_pool, bootstrapped_market_data : currency
 	let currency_pool : currency_pool = {
 		market_currency_pool = ( add_nat_nat currency_pool.market_currency_pool bootstrapped_market_data.currency_pool.market_currency_pool );
 		liquidity_reward_currency_pool = ( add_nat_nat currency_pool.liquidity_reward_currency_pool bootstrapped_market_data.currency_pool.liquidity_reward_currency_pool );
-		auction_reward_currency_pool = ( add_nat_nat currency_pool.auction_reward_currency_pool bootstrapped_market_data.currency_pool.auction_reward_currency_pool );
+		creator_reward_currency_pool = ( add_nat_nat currency_pool.creator_reward_currency_pool bootstrapped_market_data.currency_pool.creator_reward_currency_pool );
 	} in
 	{ bootstrapped_market_data with currency_pool = currency_pool; }
 

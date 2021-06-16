@@ -25,7 +25,7 @@ type currency_pool =
 {
 	market_currency_pool : nat;
 	liquidity_reward_currency_pool : nat;
-	auction_reward_currency_pool : nat;
+	creator_reward_currency_pool : nat;
 }
 
 type outcome_type =

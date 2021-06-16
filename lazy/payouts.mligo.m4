@@ -7,7 +7,7 @@ m4_loadfile(.,common_error.mligo.m4) m4_dnl
 
 let reward_denominator = 100n
 let liquidity_reward_numerator = 4n
-//let auction_reward_numerator = 1n 
+//let creator_reward_numerator = 1n 
 
 type payout_params =
 [@layout:comb]
@@ -42,12 +42,12 @@ let calculate_payout ( payout : payout_params ) : payout_result =
 
 let split_revenue ( quantity : nat ) : currency_pool =
 	let liquidity_reward_currency_pool = div_nat_nat_floor ( mul_nat_nat quantity liquidity_reward_numerator ) reward_denominator m4_debug_err("liquidity_reward_currency_pool@split_revenue@payouts.mligo.m4") in
-	let auction_reward_currency_pool = div_nat_nat_floor quantity reward_denominator m4_debug_err("auction_reward_currency_pool@split_revenue@payouts.mligo.m4") in
-	let market_currency_pool = sub_nat_nat quantity ( add_nat_nat liquidity_reward_currency_pool auction_reward_currency_pool ) m4_debug_err("market_currency_pool@split_revenue@payouts.mligo.m4") in
+	let creator_reward_currency_pool = div_nat_nat_floor quantity reward_denominator m4_debug_err("creator_reward_currency_pool@split_revenue@payouts.mligo.m4") in
+	let market_currency_pool = sub_nat_nat quantity ( add_nat_nat liquidity_reward_currency_pool creator_reward_currency_pool ) m4_debug_err("market_currency_pool@split_revenue@payouts.mligo.m4") in
 	{
 		market_currency_pool = market_currency_pool;
 		liquidity_reward_currency_pool = liquidity_reward_currency_pool;
-		auction_reward_currency_pool = auction_reward_currency_pool;
+		creator_reward_currency_pool = creator_reward_currency_pool;
 	}
 
 

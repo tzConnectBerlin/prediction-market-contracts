@@ -83,10 +83,6 @@ let mint_tokens ( market_id, clearing_numbers, token_storage : market_id * clear
 		amount = clearing_numbers.lqt_in_swap;
 		token_id = ( get_liquidity_token_id market_id );
 	}, supply_map ) in
-	let supply_map = token_mint_to_reserve ( {
-		amount = clearing_numbers.total_quantity;
-		token_id = ( get_auction_reward_token_id market_id );
-	}, supply_map ) in
 	{ token_storage with supply_map = supply_map; }
 
 let set_market_state_cleared ( market_id, auction_data, token_storage : market_id * auction_data * token_storage ) : bootstrapped_market_data * token_storage * clearing_numbers =

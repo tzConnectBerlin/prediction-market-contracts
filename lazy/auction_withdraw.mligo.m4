@@ -63,15 +63,10 @@ let transfer_auction_tokens ( args, auction_withdraw_numbers, token_storage : tr
 			amount = auction_withdraw_numbers.no_token_withdrawable;
 		}, token_storage )
 	else ( token_storage ) in
-	let token_storage = token_release_to_account ( {
+	token_release_to_account ( {
 		dst = args.caller;
 		token_id = get_liquidity_token_id args.market_id;
 		amount = auction_withdraw_numbers.liquidity_share;
-	}, token_storage ) in
-	token_release_to_account ( {
-		dst = args.caller; 
-		token_id = get_auction_reward_token_id args.market_id;
-		amount = auction_withdraw_numbers.quantity;
 	}, token_storage )
 
 let withdraw_lqt_reward_tokens ( lqt_provider_id, last_update, bootstrapped_market_data, token_storage :

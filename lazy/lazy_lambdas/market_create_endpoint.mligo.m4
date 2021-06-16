@@ -12,9 +12,6 @@ LAZY_TYPE(create_market_params)
 let f : business_endpoint_lambda =
 	fun ( params, business_storage : bytes * business_storage ) ->
 	let params = unpack_create_market_params params in
-	let operations, market_storage = create_market ( params, business_storage.markets ) in
-	operations, { business_storage with
-		markets = market_storage;
-	}
+	create_market ( params, business_storage )
 
 ») m4_dnl

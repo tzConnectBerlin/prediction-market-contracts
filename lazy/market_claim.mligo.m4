@@ -56,8 +56,8 @@ let claim_market_rewards ( market_id, business_storage : market_id * business_st
 	// Calculate payouts
 	let liquidity_reward_token_id = get_liquidity_reward_token_id market_id in
 	let liquidity_reward_payout_numbers, lqt_reward_balance = get_tokenpool_payout ( acct, liquidity_reward_token_id, bootstrapped_market_data.currency_pool.liquidity_reward_currency_pool, token_storage ) in
-	let auction_reward_token_id = get_auction_reward_token_id market_id in
-	let auction_reward_payout_numbers, auction_reward_balance = get_tokenpool_payout ( acct, auction_reward_token_id, bootstrapped_market_data.currency_pool.auction_reward_currency_pool, token_storage ) in
+	let creator_reward_token_id = get_creator_reward_token_id market_id in
+	let creator_reward_payout_numbers, creator_reward_balance = get_tokenpool_payout ( acct, creator_reward_token_id, bootstrapped_market_data.currency_pool.creator_reward_currency_pool, token_storage ) in
 	let winning_token_id = match resolution_data.winning_prediction with
 	| Yes -> pool_token_ids.yes_token_id
 	| No -> pool_token_ids.no_token_id in
@@ -74,8 +74,8 @@ let claim_market_rewards ( market_id, business_storage : market_id * business_st
 	let token_storage = token_burn_from_account ( {
 		src = acct;
 		tx = {
-			token_id = auction_reward_token_id;
-			amount = auction_reward_balance;
+			token_id = creator_reward_token_id;
+			amount = creator_reward_balance;
 		};
 	}, token_storage ) in
 	let token_storage = token_burn_from_account ( {
@@ -87,14 +87,14 @@ let claim_market_rewards ( market_id, business_storage : market_id * business_st
 	}, token_storage ) in
 	let bootstrapped_market_data = { bootstrapped_market_data with
 		currency_pool.liquidity_reward_currency_pool = liquidity_reward_payout_numbers.new_currency_pool;
-		currency_pool.auction_reward_currency_pool = auction_reward_payout_numbers.new_currency_pool;
+		currency_pool.creator_reward_currency_pool = creator_reward_payout_numbers.new_currency_pool;
 		currency_pool.market_currency_pool = winning_token_payout_numbers.new_currency_pool;
 	} in
 	let market_data = save_bootstrapped_market_data ( bootstrapped_market_data, market_data ) in
 	let market_map = save_market ( market_id, market_data, market_map ) in
 	//
 	// Add up currency payout
-	let currency_payout = add_nat_nat winning_token_payout_numbers.currency_payout ( add_nat_nat liquidity_reward_payout_numbers.currency_payout auction_reward_payout_numbers.currency_payout ) in
+	let currency_payout = add_nat_nat winning_token_payout_numbers.currency_payout ( add_nat_nat liquidity_reward_payout_numbers.currency_payout creator_reward_payout_numbers.currency_payout ) in
 	let push_payout = get_push_payout ( market_data.metadata.currency, currency_payout ) in
 	[ push_payout ], { business_storage with
 		markets.liquidity_provider_map = liquidity_provider_map;

@@ -63,12 +63,11 @@ To create an incentive for market participants to take part in the auction phase
 * Mint: *100 currency tokens -> ( 100 Yes tokens, 100 No tokens)*
 * Burn: *(100 Yes tokens, 100 No tokens) -> 95 currency tokens*
 
-The fee collected through this spread is split into two reward pools in a 20% / 80% ratio. Ownership of these pools is represented by the Auction Reward tokens (20%) and Liquidity Provider Reward Tokens (80%). The currency in these pools can be withdrawn by reward token owners after the market had been resolved.
+The fee collected through this spread is split into two reward pools in a 20% / 80% ratio. Ownership of these pools is represented by the Creator Reward tokens (20%) and Liquidity Provider Reward Tokens (80%). The currency in these pools can be withdrawn by reward token owners after the market had been resolved.
 
-Auction Reward Tokens reward auction participants according to the relative size of their bets, to counterbalance the risk of taking part in a nascent, unseeded market and helping it to come into existence.
+Creator Reward Tokens reward the creator of the market, to create an incentive for advertising and driving traffic to their market.
 
-* *Upon the clearing of the auction, 1 Auction Reward Token is minted for every single currency token placed as a bet.*
-* *Each auction participant can withdraw 1 Auction Reward Token for each currency token placed by them as a bet.*
+* *Upon market creation, 10^18 Creator Reward Tokens are minted for the address that created the market.*
 
 Liquidity providers for continuing to hold tokens in the liquidity pool. Each block, every liquidity provider is allocated newly minted liquidity reward tokens relative to the liquidity they are providing. (Naturally, these rewards are calculated in a lazy manner, whenever a participant executes a liquidity operation.) These reward tokens start to accrue as the market is cleared, and continue accruing until the market is finally resolved.
 
