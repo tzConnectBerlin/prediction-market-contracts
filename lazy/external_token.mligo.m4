@@ -35,20 +35,20 @@ let get_fa12_transfer_op ( transfer_addresses, token_address, token_amount : tra
 	let entrypoint = get_fa12_transfer_entrypoint token_address in
 	Tezos.transaction args 0mutez entrypoint
 
-let get_fa2_transfer_entrypoint ( token_address : address ) : fa2_batch_transfer contract =
-	match ( Tezos.get_entrypoint_opt "%transfer" token_address : fa2_batch_transfer contract option ) with
-	| None -> ( failwith err_INVALID_TOKEN_CONTRACT : fa2_batch_transfer contract )
+let get_fa2_transfer_entrypoint ( token_address : address ) : fa2_batch_transfer list contract =
+	match ( Tezos.get_entrypoint_opt "%transfer" token_address : fa2_batch_transfer list contract option ) with
+	| None -> ( failwith err_INVALID_TOKEN_CONTRACT : fa2_batch_transfer list contract )
 	| Some e -> e
 
 let get_fa2_transfer_op ( transfer_addresses, fa2_token_identifier, token_amount : transfer_addresses * fa2_token_identifier * nat ) : operation =
-	let args : fa2_batch_transfer = {
+	let args : fa2_batch_transfer list = [{
 		src = transfer_addresses.src;
 		txs = [ {
 			dst = transfer_addresses.dst;
 			token_id = fa2_token_identifier.token_id;
 			amount = token_amount;
 		} ];
-	} in
+	}] in
 	let entrypoint = get_fa2_transfer_entrypoint fa2_token_identifier.token_address in
 	Tezos.transaction args 0mutez entrypoint
 
