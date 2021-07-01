@@ -46,7 +46,7 @@ let check_market_create_permission ( market_storage : market_storage ) : unit =
 
 let create_market ( create_market_params, business_storage : create_market_params * business_storage ) : operation list * business_storage =
 	let market_storage = business_storage.markets in
-
+	let _ = check_market_create_permission market_storage in
 	let market_id = create_market_params.market_id in
 	let _ = check_market_id_availability ( market_id, market_storage.market_map ) in
 	let auction_data = initialize_auction ( create_market_params.auction_period_end, create_market_params.bet ) in
