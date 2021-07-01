@@ -106,6 +106,7 @@ type market_storage =
 {
 	market_map : market_map;
 	liquidity_provider_map : liquidity_provider_map;
+	create_restriction : address option;
 }
 
 //

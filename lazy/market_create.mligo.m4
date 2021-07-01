@@ -10,6 +10,7 @@ m4_loadfile(.,market_token_ids.mligo.m4) m4_dnl
 m4_loadfile(.,external_token.mligo.m4) m4_dnl
 
 let err_MARKET_EXISTS = "Market already exists"
+let err_CREATE_NOT_ALLOWED = "Market creation not allowed for caller"
 
 m4_define(«CREATOR_TOKEN_DECIMALS»,«18») m4_dnl
 let creator_reward_token_supply = m4_bc(10^CREATOR_TOKEN_DECIMALS())n
@@ -35,8 +36,17 @@ let check_market_id_availability ( market_id, market_map : market_id * market_ma
 	| Some _ -> failwith err_MARKET_EXISTS
 	| None -> unit
 
+let check_market_create_permission ( market_storage : market_storage ) : unit =
+	match market_storage.create_restriction with
+	| None -> unit
+	| Some e -> if ( e = Tezos.sender ) then
+		unit
+	else
+		failwith err_CREATE_NOT_ALLOWED
+
 let create_market ( create_market_params, business_storage : create_market_params * business_storage ) : operation list * business_storage =
 	let market_storage = business_storage.markets in
+
 	let market_id = create_market_params.market_id in
 	let _ = check_market_id_availability ( market_id, market_storage.market_map ) in
 	let auction_data = initialize_auction ( create_market_params.auction_period_end, create_market_params.bet ) in

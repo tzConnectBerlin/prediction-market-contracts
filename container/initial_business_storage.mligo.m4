@@ -10,6 +10,7 @@ let initial_business_storage : business_storage = {
 	markets = {
 		market_map = ( Big_map.empty : market_map );
 		liquidity_provider_map = ( Big_map.empty : liquidity_provider_map );
+		create_restriction = ( None : address option );
 	};
 	tokens = {
 		ledger_map = ( Big_map.empty : ledger_map );
