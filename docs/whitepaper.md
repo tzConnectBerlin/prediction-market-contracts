@@ -18,7 +18,7 @@ $$x_0 * y_0 = (x_0 + (1-\rho)\Delta x) * (y_0 - \Delta y) $$
 
 The swap fee implemented in *Krisa* is in line with the Uniswap fee at $0.3\%$ or $\rho = 0.003$. ([Zhang et al., 2018](https://github.com/runtimeverification/verified-smart-contracts/blob/uniswap/uniswap/x-y-k.pdf))
 
-The liquidity pool in a *Krisa* market allows for the exchange of $yes$ and $no$ tokens for one another, and thus to adjust one's position according to preferences. Entry and exit from the market does not happen through a liquidity pool mechanic, but by a fixed price mint / burn mechanic:
+The liquidity pool in a *Krisa* market allows for the exchange of $yes$ and $no$ tokens for one another, and thus to adjust one's position according to preferences. Entry and exit from the market does not happen through a liquidity pool, but via a fixed price mint / burn mechanic:
 
 ### Entering and exiting the market
 
@@ -30,7 +30,7 @@ In order to take an extreme position in the market, and purchase only one of the
 
 At the creation of a prediction market in Krisa, a Tezos address has to be specified which has the ability to resolve the market (ie. attest to the outcome having become known). For live markets, this address is expected to be a Tezos smart contract, serving as business logic and a transform over the data provided by a trusted on-chain oracle, to ensure reliability and accuracy of the result.
 
-Once a market had been resolved, $1$ outcome tokens pertaining to the confirmed outcome expires at a price of $1 - \sigma$ in currency tokens, while its counterpart expires at a value of $0$.
+Once a market had been resolved, outcome tokens pertaining to the confirmed outcome expire at a price of $1 - \sigma$ in currency tokens, while their counterparts expire at a value of $0$.
 
 ## Liquidity seeding and auction phase
 
