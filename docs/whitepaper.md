@@ -30,7 +30,7 @@ In order to take an extreme position in the market, and purchase only one of the
 
 At the creation of a prediction market in Krisa, a Tezos address has to be specified which has the ability to resolve the market (ie. attest to the outcome having become known). For live markets, this address is expected to be a Tezos smart contract, serving as business logic and a transform over the data provided by a trusted on-chain oracle, to ensure reliability and accuracy of the result.
 
-Once a market had been resolved, $Q$ outcome tokens pertaining to the confirmed outcome expire at a price of $Q * (1 - \sigma)$ currency tokens, while its counterpart expires at a value of $0$.
+Once a market had been resolved, $1$ outcome tokens pertaining to the confirmed outcome expires at a price of $1 - \sigma$ in currency tokens, while its counterpart expires at a value of $0$.
 
 ## Liquidity seeding and auction phase
 
@@ -74,7 +74,18 @@ For every participant $i$, the contributions ${C_i}_{yes}$ and ${C_i}_{no}$ will
 
 $${C_i}_{yes} = \frac{g_i}{P}, ~{C_i}_{no} = \frac{g_i}{1-P}$$
 
-Finally, the liquidity shares allocated to each participant $i$ for their contribution will be
+Finally, liquidity shares will be allocated to each participant $i$ for their contribution at a ratio of
 
-$$g_i / \sum_{i=1}^I g_i$$
+$$\frac{g_i}{\sum_{i=1}^I g_i},$$
 
+which in practice means an allocation of $g_i$ liquidity share tokens to each auction participant $i$, and a total initial supply of liquidity tokens of $\sum_{i=1}^I g_i$.
+
+After funding the liquidity pool, each auction participant is left with a number of liquidity share tokens, as well as a number of their more preferred outcome tokens, depending the certainty of their preciction. For a bet of exactly $p_i = \frac{1}{2}$, indicating a lack of preference, the participant is left with no outcome tokens and liquidity share tokens only.
+
+## Fee and reward mechanics
+
+For discussion of the reward mechanics built into Uniswap-style liquidity pools through the swap fee $\rho$ described above, see ([Zhang et al., 2018](https://github.com/runtimeverification/verified-smart-contracts/blob/uniswap/uniswap/x-y-k.pdf)). In a prediction market, due to the limited lifespan of the market, and potential market imperfection before resolution happens, there is a chance for the so-called *impermanent loss* to become permanent, which may act as an incentive for participants to prematurely withdraw liquidity from the market.
+
+To counterbalance this psychological effect, liquidity providers are allocated reward tokens on a time-proportionate basis. For each participant $i$ holding liquidity share tokens ${S_i}_d$, an equal amount of reward tokens will be (lazily) minted at the inclusion of block $d$. After the market had been resolved, each reward token will correspond to a proportionate share of the liquidity provider reward pool, which is $80\%$ of the total income collected through the mint fee $\sigma$.
+
+The remaining $20\%$ of the mint fee income is allocated to the market creator.
