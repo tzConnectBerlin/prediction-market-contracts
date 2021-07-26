@@ -78,12 +78,12 @@ $$\frac{g_i}{\sum_{i=1}^I g_i},$$
 
 which in practice means an allocation of $g_i$ liquidity share tokens to each auction participant $i$, and a total initial supply of liquidity tokens of $\sum_{i=1}^I g_i$.
 
-After funding the liquidity pool, each auction participant is left with a number of liquidity share tokens, as well as a number of their more preferred outcome tokens, depending the certainty of their preciction. For a bet of exactly $p_i = \frac{1}{2}$, indicating a lack of preference, the participant is left with no outcome tokens and liquidity share tokens only.
+After funding the liquidity pool, each auction participant is left with a number of liquidity share tokens, as well as a number of their more preferred outcome tokens, depending the certainty of their preciction. For a bet of exactly $p_i = \frac{1}{2}$, the participant is left with liquidity share tokens only, and no outcome tokens (in line with a lack of preference toward any outcome).
 
 ## Fee and reward mechanics
 
 For discussion of the reward mechanics built into Uniswap-style liquidity pools through the swap fee $\rho$ described above, see ([Zhang et al., 2018](https://github.com/runtimeverification/verified-smart-contracts/blob/uniswap/uniswap/x-y-k.pdf)). In a prediction market, due to the limited lifespan of the market, and potential market imperfection before resolution happens, there is a chance for the so-called *impermanent loss* to become permanent, which may act as an incentive for participants to prematurely withdraw liquidity from the market.
 
-To counterbalance this effect, liquidity providers are allocated reward tokens on a time-proportionate basis. For each participant $i$ holding liquidity share tokens ${S_i}_d$, an equal amount of reward tokens will be (lazily) minted at the inclusion of block $d$. After the market had been resolved, each reward token will correspond to a proportionate share of the liquidity provider reward pool, which is $80\%$ of the total income collected through the mint fee $\sigma$.
+To counterbalance this effect, liquidity providers are allocated reward tokens on a time-proportionate basis. For each participant $i$ holding liquidity share tokens ${S_i}_d$, an equal amount of reward tokens will be (lazily) minted at the inclusion of block $d$. After the market had been resolved, each reward token will correspond to a proportionate share of the liquidity provider reward pool, which is $80\%$ of the total income collected through the redemption fee $\sigma$.
 
-The remaining $20\%$ of the mint fee income is allocated to the market creator.
+The other $20\%$ of the redemption fee income is allocated to the market creator.
