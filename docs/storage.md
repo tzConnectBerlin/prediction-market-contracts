@@ -16,13 +16,17 @@ This document describes the structure and semantics of the contract storage, as 
 	  * `total_supply : nat` : Total supply minted of the token (including reserve)
 	  * `in_reserve : nat` : Pool of minted but unclaimed tokens
   * `markets` : Storage root for prediction market data
+    * `create_restrictions` : Restrictions on market creation, to be set at contract deployment
+	  * `creator_address : address option` : The sole address allowed to create new markets (optional)
+	  * `currency : external_token option` : The sole token to be allowed as market currency (optional)
+	    * *(For type internals, see below in currency metadata.)*
     * `market_map : Big_map` : Map of all prediction markets
 	  * Key (`nat`) : A user-specified arbitrary-size identifier
 	  * `metadata` : Descriptive information about the market
 		* `ipfs_hash : string option` : An optional hash for relevant metadata of the market stored in ipfs
 	    * `description : string` : A human-readable description of the market question
 		* `adjudicator : address` : The address authorized to resolve the market
-		* `currency` : Union type describing the token used as the market currency, of the following options:
+		* `currency : external_token` : Union type describing the token used as the market currency, of the following options:
 		  * `FA12 : address` : The address of an FA1.2 token contract
 		  * `FA2`
 		    * `token_address : address`

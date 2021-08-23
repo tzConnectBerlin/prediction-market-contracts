@@ -10,7 +10,7 @@ m4_loadfile(.,market_token_ids.mligo.m4) m4_dnl
 m4_loadfile(.,external_token.mligo.m4) m4_dnl
 
 let err_MARKET_EXISTS = "Market already exists"
-let err_CREATE_NOT_ALLOWED = "Market creation not allowed for caller"
+let err_CREATE_NOT_ALLOWED = "Market creation denied due to create restrictions"
 
 m4_define(«CREATOR_TOKEN_DECIMALS»,«18») m4_dnl
 let creator_reward_token_supply = m4_bc(10^CREATOR_TOKEN_DECIMALS())n
@@ -36,10 +36,18 @@ let check_market_id_availability ( market_id, market_map : market_id * market_ma
 	| Some _ -> failwith err_MARKET_EXISTS
 	| None -> unit
 
-let check_market_create_permission ( market_storage : market_storage ) : unit =
-	match market_storage.create_restriction with
+let check_market_creator_restriction ( market_create_restrictions : market_create_restrictions ) : unit =
+	match market_create_restrictions.creator_address with
 	| None -> unit
 	| Some e -> if ( e = Tezos.sender ) then
+		unit
+	else
+		failwith err_CREATE_NOT_ALLOWED
+
+let check_market_currency_restriction ( currency, market_create_restrictions : external_token * market_create_restrictions ) : unit =
+	match market_create_restrictions.currency with
+	| None -> unit
+	| Some e -> if ( e = currency ) then
 		unit
 	else
 		failwith err_CREATE_NOT_ALLOWED
@@ -48,11 +56,14 @@ let create_market ( create_market_args, business_storage : create_market_args * 
 	let _ = check_execution_deadline create_market_args.operation_details.execution_deadline in
 	let market_id = create_market_args.operation_details.market_id in
 	let market_storage = business_storage.markets in
-	let _ = check_market_create_permission market_storage in
+	let market_create_restrictions = market_storage.create_restrictions in
+	let _ = check_market_creator_restriction market_create_restrictions in
 	let _ = check_market_id_availability ( market_id, market_storage.market_map ) in
 	let auction_data = initialize_auction ( create_market_args.auction_period_end, create_market_args.bet ) in
+	let market_metadata = create_market_args.metadata in
+	let _ = check_market_currency_restriction ( market_metadata.currency, market_create_restrictions ) in
 	let market_data : market_data = {
-		metadata = create_market_args.metadata;
+		metadata = market_metadata;
 		state = AuctionRunning(auction_data)
 	} in
 	let market_map = save_market ( market_id, market_data, market_storage.market_map ) in

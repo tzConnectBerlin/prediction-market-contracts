@@ -101,12 +101,19 @@ type liquidity_provider_map = ( lqt_provider_id, lqt_provider_details ) big_map
 
 // The root storage for markets
 
+type market_create_restrictions =
+[@layout_comb]
+{
+	creator_address : address option;
+	currency : external_token option;
+}
+
 type market_storage =
 [@layout:comb]
 {
 	market_map : market_map;
 	liquidity_provider_map : liquidity_provider_map;
-	create_restriction : address option;
+	create_restrictions : market_create_restrictions;
 }
 
 //
