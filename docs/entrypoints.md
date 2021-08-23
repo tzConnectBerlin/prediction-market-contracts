@@ -79,8 +79,8 @@ Enter or exit the market by minting or burning outcome token pairs in exchange f
   * `market_id : nat` : Arbitrary market identifier
   * `execution_deadline : timestamp` : Time after which to consider the operation stale, and abort it
 * `direction` : Union type of the following options
-  * `PayIn` : Enter the market by paying currency tokens
-  * `PayOut` : Exit the market and receive currency tokens
+  * `Mint` : Enter the market by paying currency tokens
+  * `Burn` : Exit the market and receive currency tokens
 * `amount : nat` : The amount of outcome token pairs to mint or burn
 
 ## `%swapTokens`
