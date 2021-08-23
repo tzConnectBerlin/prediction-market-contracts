@@ -6,7 +6,6 @@ m4_loadfile(.,maths.mligo.m4) m4_dnl
 
 let err_AUCTION_CLOSED = "Market auction closed"
 let err_INVALID_PROBABILITY = "Probability must be a fixed point number with domain [0.0; 1.0]"
-let err_INVALID_AMOUNT = "Amount must be greater than zero"
 
 type bet_details =
 [@layout:comb]

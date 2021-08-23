@@ -68,17 +68,19 @@ let check_slippage ( token_out, min_token_out : nat * nat ) : unit =
 	else
 		unit
 
-let swap_token_for_token ( args, business_storage : token_trade_params * business_storage ) : business_storage =
+let swap_token_for_token ( args, business_storage : token_trade_args * business_storage ) : business_storage =
+	let _ = check_execution_deadline args.operation_details.execution_deadline in
+	let market_id = args.operation_details.market_id in
 	let market_map = business_storage.markets.market_map in
-	let market_data = get_market ( args.trade.market_id, market_map ) in
+	let market_data = get_market ( market_id, market_map ) in
 	let bootstrapped_market_data = get_bootstrapped_market_data market_data in
 	let _ = check_is_market_still_open bootstrapped_market_data in
-	let swap_token_ids = get_swap_token_ids ( args.trade.market_id, args.token_to_sell ) in
+	let swap_token_ids = get_swap_token_ids ( market_id, args.token_to_sell ) in
 	let ledger_map = business_storage.tokens.ledger_map in
 	let token_pool = get_token_pool ( swap_token_ids, ledger_map ) in
-	let token_a_in = args.trade.amount in
+	let token_a_in = args.fixed_input in
 	let token_b_out = calc_fixed_input_swap ( token_a_in, token_pool ) in
-	let _ = check_slippage ( token_b_out, args.slippage_control ) in
+	let _ = check_slippage ( token_b_out, args.min_output ) in
 	let ledger_map = execute_token_swap ( {
 		token_a = token_a_in;
 		token_b = token_b_out;

@@ -113,53 +113,55 @@ type market_storage =
 // Call argument types
 //
 
-type bet_params =
+type operation_details =
 [@layout:comb]
 {
-  market_id : market_id;
-  bet : bet;
+	execution_deadline : timestamp;
+	market_id : market_id;
 }
 
-type create_market_params =
+type create_market_args =
 [@layout:comb]
 {
-	market_id : market_id;
+	operation_details : operation_details;
 	metadata : market_metadata;
 	auction_period_end : timestamp;
 	bet : bet;
 }
 
-type resolve_market_params =
+type bet_args =
+[@layout:comb]
+{
+  operation_details : operation_details;
+  bet : bet;
+}
+
+type resolve_market_args =
 [@layout:comb]
 {
 	market_id : market_id;
 	winning_prediction : outcome_type;
 }
 
-type market_trade_params =
+type direction =
+	| Mint
+	| Burn
+
+type enter_exit_args =
 [@layout:comb]
 {
-	market_id : market_id;
+	operation_details : operation_details;
+	direction : direction;
 	amount : nat;
 }
 
-type token_trade_params =
+type token_trade_args =
 [@layout:comb]
 {
+	operation_details : operation_details;
 	token_to_sell : outcome_type;
-	trade : market_trade_params;
-	slippage_control : nat;
-}
-
-type direction =
-	| PayIn
-	| PayOut
-
-type directional_params =
-[@layout:comb]
-{
-	direction : direction;
-	trade : market_trade_params;
+	fixed_input : nat;
+	min_output : nat;
 }
 
 type token_pair =
@@ -169,11 +171,20 @@ type token_pair =
 	token_b : nat; // No token
 }
 
-type move_liquidity_params =
+type add_liquidity_args =
 [@layout:comb]
 {
-	params : directional_params;
-	slippage_control : token_pair;
+	operation_details : operation_details;
+	intended_token_amounts : token_pair;
+	min_token_amounts : token_pair;
+}
+
+type remove_liquidity_args =
+[@layout:comb]
+{
+	operation_details : operation_details;
+	amount : nat;
+	min_token_amounts : token_pair;
 }
 
 ») m4_dnl

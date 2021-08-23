@@ -7,14 +7,15 @@ m4_loadfile(.,installer.mligo.m4) m4_dnl
 m4_loadfile(.,lazy_endpoint_helper.mligo.m4) m4_dnl
 
 type market_action =
-	| MarketCreate of create_market_params
-	| AuctionBet of bet_params
+	| MarketCreate of create_market_args
+	| AuctionBet of bet_args
 	| AuctionClear of market_id
 	| AuctionWithdraw of market_id
-	| MarketEnterExit of directional_params
-	| SwapTokens of token_trade_params
-	| SwapLiquidity of move_liquidity_params
-	| MarketResolve of resolve_market_params
+	| MarketEnterExit of enter_exit_args
+	| SwapTokens of token_trade_args
+	| AddLiquidity of add_liquidity_args
+	| RemoveLiquidity of remove_liquidity_args
+	| MarketResolve of resolve_market_args
 	| ClaimWinnings of market_id
 
 type main_action =
@@ -29,7 +30,8 @@ let market_dispatcher ( action, container_storage : market_action * container_st
 	| AuctionWithdraw params -> business_endpoint_dispatch ( "auction_withdraw_endpoint", Bytes.pack params, container_storage )
 	| MarketEnterExit params -> business_endpoint_dispatch ( "market_enter_exit_endpoint", Bytes.pack params, container_storage )
 	| SwapTokens params -> business_endpoint_dispatch ( "swap_swap_tokens_endpoint", Bytes.pack params, container_storage )
-	| SwapLiquidity params -> business_endpoint_dispatch ( "swap_move_lqt_endpoint", Bytes.pack params, container_storage )
+	| AddLiquidity params -> business_endpoint_dispatch ( "swap_add_lqt_endpoint", Bytes.pack params, container_storage )
+	| RemoveLiquidity params -> business_endpoint_dispatch ( "swap_remove_lqt_endpoint", Bytes.pack params, container_storage )
 	| MarketResolve params -> business_endpoint_dispatch ( "market_resolve_endpoint", Bytes.pack params, container_storage )
 	| ClaimWinnings params -> business_endpoint_dispatch ( "market_claim_endpoint", Bytes.pack params, container_storage )
 

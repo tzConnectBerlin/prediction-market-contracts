@@ -7,11 +7,11 @@ m4_loadfile(../../common/framework,lazy_endpoint.mligo.m4) m4_dnl
 m4_loadfile(../../common/framework,lazy_typing.mligo.m4) m4_dnl
 m4_loadfile(..,market_create.mligo.m4) m4_dnl
 
-LAZY_TYPE(create_market_params)
+LAZY_TYPE(create_market_args)
 
 let f : business_endpoint_lambda =
 	fun ( params, business_storage : bytes * business_storage ) ->
-	let params = unpack_create_market_params params in
+	let params = unpack_create_market_args params in
 	create_market ( params, business_storage )
 
 ») m4_dnl

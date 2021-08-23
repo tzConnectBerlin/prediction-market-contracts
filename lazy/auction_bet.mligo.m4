@@ -37,9 +37,10 @@ let update_auction_totals ( old_bet, new_bet, auction_data : bet * bet * auction
 		uniswap_contribution = total_uniswap_contribution;
 	} )
 
-let place_auction_bet ( bet_params, market_storage : bet_params * market_storage ) : operation list * market_storage =
+let place_auction_bet ( bet_args, market_storage : bet_args * market_storage ) : operation list * market_storage =
+	let _ = check_execution_deadline bet_args.operation_details.execution_deadline in
+	let market_id = bet_args.operation_details.market_id in
 	let market_map = market_storage.market_map in
-	let market_id = bet_params.market_id in
 	let market_data = get_market ( market_id, market_map ) in
 	let auction_data = get_auction_data market_data in
 	let liquidity_provider_map = market_storage.liquidity_provider_map in
@@ -48,11 +49,11 @@ let place_auction_bet ( bet_params, market_storage : bet_params * market_storage
 		market_id = market_id;
 	} in
 	let old_bet = get_auction_bet_or_empty ( lqt_provider_id, liquidity_provider_map ) in
-	let ( merged_bet, auction_data ) = update_auction_totals ( old_bet, bet_params.bet, auction_data ) in
+	let ( merged_bet, auction_data ) = update_auction_totals ( old_bet, bet_args.bet, auction_data ) in
 	let liquidity_provider_map = save_auction_bet ( lqt_provider_id, merged_bet, market_storage.liquidity_provider_map ) in
 	let market_data = save_auction_data ( auction_data, market_data ) in
 	let market_map = save_market ( market_id, market_data, market_map ) in
-	let pull_payment = get_pull_payment ( market_data.metadata.currency, bet_params.bet.quantity ) in
+	let pull_payment = get_pull_payment ( market_data.metadata.currency, bet_args.bet.quantity ) in
 	[ pull_payment ], { market_storage with
 		liquidity_provider_map = liquidity_provider_map;
 		market_map = market_map;

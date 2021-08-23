@@ -7,11 +7,11 @@ m4_loadfile(../../common/framework,lazy_endpoint.mligo.m4) m4_dnl
 m4_loadfile(../../common/framework,lazy_typing.mligo.m4) m4_dnl
 m4_loadfile(..,swap_swap_tokens.mligo.m4) m4_dnl
 
-LAZY_TYPE(token_trade_params)
+LAZY_TYPE(token_trade_args)
 
 let f : business_endpoint_lambda =
 	fun ( params, business_storage : bytes * business_storage ) ->
-	let params = unpack_token_trade_params params in
+	let params = unpack_token_trade_args params in
 	let business_storage = swap_token_for_token ( params, business_storage ) in
 	( [] : operation list ), business_storage
 

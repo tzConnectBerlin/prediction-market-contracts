@@ -44,14 +44,15 @@ let check_market_create_permission ( market_storage : market_storage ) : unit =
 	else
 		failwith err_CREATE_NOT_ALLOWED
 
-let create_market ( create_market_params, business_storage : create_market_params * business_storage ) : operation list * business_storage =
+let create_market ( create_market_args, business_storage : create_market_args * business_storage ) : operation list * business_storage =
+	let _ = check_execution_deadline create_market_args.operation_details.execution_deadline in
+	let market_id = create_market_args.operation_details.market_id in
 	let market_storage = business_storage.markets in
 	let _ = check_market_create_permission market_storage in
-	let market_id = create_market_params.market_id in
 	let _ = check_market_id_availability ( market_id, market_storage.market_map ) in
-	let auction_data = initialize_auction ( create_market_params.auction_period_end, create_market_params.bet ) in
+	let auction_data = initialize_auction ( create_market_args.auction_period_end, create_market_args.bet ) in
 	let market_data : market_data = {
-		metadata = create_market_params.metadata;
+		metadata = create_market_args.metadata;
 		state = AuctionRunning(auction_data)
 	} in
 	let market_map = save_market ( market_id, market_data, market_storage.market_map ) in
@@ -59,13 +60,13 @@ let create_market ( create_market_params, business_storage : create_market_param
 		originator = Tezos.sender;
 		market_id = market_id;
 	} in
-	let liquidity_provider_map = save_auction_bet ( lqt_provider_id, create_market_params.bet, market_storage.liquidity_provider_map ) in
+	let liquidity_provider_map = save_auction_bet ( lqt_provider_id, create_market_args.bet, market_storage.liquidity_provider_map ) in
 	let market_storage = { market_storage with
 		market_map = market_map;
 		liquidity_provider_map = liquidity_provider_map;
 	} in
 	let token_storage = mint_creator_reward_tokens ( market_id, business_storage.tokens ) in
-	let pull_payment = get_pull_payment ( create_market_params.metadata.currency, create_market_params.bet.quantity ) in
+	let pull_payment = get_pull_payment ( create_market_args.metadata.currency, create_market_args.bet.quantity ) in
 	[ pull_payment ], { business_storage with
 		markets = market_storage;
 		tokens = token_storage; }

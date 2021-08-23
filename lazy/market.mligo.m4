@@ -8,6 +8,14 @@ let err_NO_SUCH_MARKET = "No such market"
 let err_MARKET_NOT_BOOTSTRAPPED = "Market not bootstrapped"
 let err_MARKET_NOT_RESOLVED = "Market not resolved"
 let err_MARKET_ALREADY_RESOLVED = "Market has already been resolved"
+let err_DEADLINE_PASSED = "Execution deadline has passed"
+let err_INVALID_AMOUNT = "Amount must be greater than zero"
+
+let check_execution_deadline ( deadline : timestamp ) : unit =
+	if ( deadline >= Tezos.now ) then
+		unit
+	else
+		failwith err_DEADLINE_PASSED
 
 let check_is_market_still_open ( bootstrapped_market_data : bootstrapped_market_data ) : unit =
 	match bootstrapped_market_data.resolution with

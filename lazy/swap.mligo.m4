@@ -17,6 +17,12 @@ type liquidity_pool =
 	liquidity_supply : nat;
 }
 
+let check_pair_slippage_control ( amounts, min_amounts : token_pair * token_pair ) : unit =
+	if ( ( amounts.token_a >= min_amounts.token_a ) && ( amounts.token_b >= min_amounts.token_b ) ) then
+		unit
+	else
+		failwith err_SLIPPAGE_EXCEEDED
+
 let calc_liquidity_to_tokens ( lqt_amount, liquidity_pool : nat * liquidity_pool ) : token_pair =
 	if ( lqt_amount = 0n ) then
 		{
