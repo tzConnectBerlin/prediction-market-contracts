@@ -13,7 +13,9 @@ Create a new prediction market
 * `market_id` has to be unique
 
 ### Arguments
-* `market_id : nat` : An arbitrary identifier for the new market
+* `operation_details`
+  * `market_id : nat` : An arbitrary identifier for the new market
+  * `execution_deadline : timestamp` : Time after which to consider the operation stale, and abort it
 * `metadata`
   * `ipfs_hash : string option` : An optional hash for relevant metadata of the market stored in ipfs
   * `description : string` : A human-readable description of the market question
@@ -36,7 +38,9 @@ Place a new bet in the auction (or augmenting an existing one)
 * The market must not have been cleared
 
 ### Arguments
-* `market_id : nat`
+* `operation_details`
+  * `market_id : nat` : Arbitrary market identifier
+  * `execution_deadline : timestamp` : Time after which to consider the operation stale, and abort it
 * `bet`
   * `predicted_probability : fixedpoint` : A fixed point representation of the probability of a Yes outcome predicted in the bet
   * `quantity : nat` : The amount of currency tokens placed down for the bet
@@ -71,12 +75,13 @@ Enter or exit the market by minting or burning outcome token pairs in exchange f
 * The market must not have been resolved
 
 ### Arguments
+* `operation_details`
+  * `market_id : nat` : Arbitrary market identifier
+  * `execution_deadline : timestamp` : Time after which to consider the operation stale, and abort it
 * `direction` : Union type of the following options
   * `PayIn` : Enter the market by paying currency tokens
   * `PayOut` : Exit the market and receive currency tokens
-* `params`
-  * `market_id : nat`
-  * `amount : nat` : The amount of outcome token pairs to mint or burn
+* `amount : nat` : The amount of outcome token pairs to mint or burn
 
 ## `%swapTokens`
 Swap one outcome token through the liquidity pool for its opposing pair as a fixed input swap operation
@@ -87,15 +92,37 @@ Swap one outcome token through the liquidity pool for its opposing pair as a fix
 * The market must not have been resolved
 
 ### Arguments
+* `operation_details`
+  * `market_id : nat` : Arbitrary market identifier
+  * `execution_deadline : timestamp` : Time after which to consider the operation stale, and abort it
 * `token_to_sell` : Union type of the following options
   * `Yes`
   * `No`
-* `trade`
-  * `market_id : nat`
-  * `amount : nat` : The amount of token to sell
-* `slippage_control : nat` : Minimum amount of bought token accepted
+* `fixed_input : nat` : The amount of token to sell
+* `min_output : nat` : Minimum amount of bought token accepted
 
-## `%swapLiquidity`
+## `%addLiquidity`
+Add or remove liquidity from the liquidity pool at the current ratio
+
+### Call restrictions
+* The market has to exist
+* The market must have been cleared
+* The market must not have been resolved
+* `intended_token_amounts` must be greater than 0
+* `min_token_amounts` must be greater than 0
+
+### Arguments
+* `operation_details`
+  * `market_id : nat` : Arbitrary market identifier
+  * `execution_deadline : timestamp` : Time after which to consider the operation stale, and abort it
+* `intended_token_amounts` : Intended amounts of tokens to add as liquidity, committing to a market price
+  * `token_a : nat` : Yes token
+  * `token_b : nat` : No token
+* `min_token_amounts` : Minimal token amounts to add, defining accepted price slippage
+  * `token_a : nat` : Yes token
+  * `token_b : nat` : No token
+
+## `%removeLiquidity`
 Add or remove liquidity from the liquidity pool at the current ratio
 
 ### Call restrictions
@@ -104,16 +131,14 @@ Add or remove liquidity from the liquidity pool at the current ratio
 * The market must not have been resolved
 
 ### Arguments
-* `params`
-  * `direction` : Union type of the following options
-    * `PayIn` : Add liquidity to the pool
-    * `PayOut` : Remove liquidity from the pool
-  * `trade`
-    * `market_id : nat`
-    * `amount : nat` : The amount of liquidity tokens to receive or burn
-* `slippage_control` : Minimum token amounts for removing liquidity / Maximum amounts for adding
-  * `token_a : nat` : Minimum / maximum amount of Yes token
-  * `token_b : nat` : Minimum / maximum amount of No token
+* `operation_details`
+  * `market_id : nat` : Arbitrary market identifier
+  * `execution_deadline : timestamp` : Time after which to consider the operation stale, and abort it
+* `amount : nat` : The amount of liquidity tokens to burn for outcome tokens
+* `min_token_amounts` : Minimum token amounts accepted
+  * `token_a : nat` : Yes token
+  * `token_b : nat` : No token
+
 
 ## `%marketResolve`
 Resolve the market to a known outcome
