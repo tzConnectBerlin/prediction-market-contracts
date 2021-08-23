@@ -11,6 +11,12 @@ m4_loadfile(.,market_token_ids.mligo.m4) m4_dnl
 m4_loadfile(.,lqt_rewards.mligo.m4) m4_dnl
 m4_loadfile(.,swap.mligo.m4) m4_dnl
 
+let check_amounts_validity ( token_pair : token_pair ) : unit =
+	if ( ( token_pair.token_a > 0n ) && ( token_pair.token_b > 0n ) ) then
+		unit
+	else
+		failwith err_INVALID_AMOUNT
+
 let calc_liquidity_token_amounts ( intended_token_amounts, pool_status : token_pair * liquidity_pool ) : nat * token_pair =
 	let intended_ratio = div_nat_nat intended_token_amounts.token_a intended_token_amounts.token_b err_INVALID_AMOUNT in
 
@@ -46,6 +52,9 @@ let add_liquidity ( args, business_storage : add_liquidity_args * business_stora
 
 	let pool_token_ids = get_pool_token_ids ( market_id ) in
 	let pool_status = get_pool_status ( pool_token_ids, token_storage ) in
+
+	let _ = check_amounts_validity args.min_token_amounts in
+	let _ = check_amounts_validity args.intended_token_amounts in
 
 	let ( lqt_amount, token_amounts ) = calc_liquidity_token_amounts ( args.intended_token_amounts, pool_status ) in
 	let _ = check_pair_slippage_control ( token_amounts, args.min_token_amounts ) in

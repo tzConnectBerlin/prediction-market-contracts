@@ -50,7 +50,7 @@ let do_clearing_calculations ( auction_data : auction_data ) : clearing_numbers 
 let check_market_health ( clearing_numbers : clearing_numbers ) : unit =
 	if ( clearing_numbers.lqt_in_swap = 0n ) then
 		failwith err_MARKET_ILLIQUID
-	else if ( ( clearing_numbers.yes_contributed_to_swap = 0n ) or ( clearing_numbers.no_contributed_to_swap = 0n ) ) then
+	else if ( ( clearing_numbers.yes_contributed_to_swap = 0n ) || ( clearing_numbers.no_contributed_to_swap = 0n ) ) then
 		failwith err_MARKET_UNBALANCED
 	else
 		unit
