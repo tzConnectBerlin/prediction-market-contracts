@@ -1,6 +1,6 @@
 m4_changequote m4_dnl
 m4_changequote(«,») m4_dnl
-m4_ifdef(«SWAP_MOVE_LQT»,,«m4_define(«SWAP_MOVE_LQT»,1) m4_dnl
+m4_ifdef(«SWAP_ADD_LQT»,,«m4_define(«SWAP_ADD_LQT»,1) m4_dnl
 m4_include(m4_helpers.m4) m4_dnl
 m4_loadfile(../common,business_interface_root.mligo.m4) m4_dnl
 m4_loadfile(.,common_error.mligo.m4) m4_dnl
