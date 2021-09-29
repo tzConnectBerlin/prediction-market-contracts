@@ -17,3 +17,7 @@ For detailed description, see the following documentation:
 * First run FlextesaPlayground ( https://github.com/dani-jozsef/FlextesaPlayground )
 * $ cd build
 * $ ./install.sh {tezos-client sender account name}
+
+## Front-end
+
+The front-end lives at https://github.com/tzConnectBerlin/prediction-market-ui
