@@ -9,7 +9,7 @@ let err_BET_NOT_WITHDRAWN = "Withdraw auction bet before further liquidity opera
 let get_current_liquidity_activity_level ( bootstrapped_market_data : bootstrapped_market_data ) : nat =
 	match bootstrapped_market_data.resolution with
 	| None -> Tezos.level
-	| Some e -> e.resolved_at_block
+	| Some e -> add_nat_nat e.resolved_at_block 1n // Count the resolution block for liquidity rewards - we need this if the market is resolved directly from auction
 
 let save_lqt_provider_update_level ( lqt_provider_id, level, liquidity_provider_map : lqt_provider_id * nat * liquidity_provider_map ) : liquidity_provider_map =
 	Big_map.update lqt_provider_id ( Some( Liquidity_reward_updated_at( level ) ) ) liquidity_provider_map
@@ -23,7 +23,6 @@ type update_lqt_reward_supply_internal_args =
 
 let update_lqt_reward_supply_internal ( args, bootstrapped_market_data, supply_map : update_lqt_reward_supply_internal_args * bootstrapped_market_data * supply_map ) : bootstrapped_market_data * supply_map =
 	let blocks_elapsed = sub_nat_nat args.level bootstrapped_market_data.liquidity_reward_supply_updated_at_block m4_debug_err("blocks_elapsed@update_lqt_reward_supply_internal@lqt_rewards.mligo.m4") in
-	let blocks_elapsed = add_nat_nat blocks_elapsed 1n in // We count the clearing (0th) block as 1 block!
 	let lqt_supply = get_token_supply ( args.lqt_token_id, supply_map ) in
 	let lqt_reward_to_mint = mul_nat_nat blocks_elapsed lqt_supply in
 	let supply_map = token_mint_to_reserve ( {
@@ -52,7 +51,6 @@ type withdraw_lqt_reward_tokens_internal_args =
 
 let withdraw_lqt_reward_tokens_internal ( args, token_storage : withdraw_lqt_reward_tokens_internal_args * token_storage ) : token_storage =
 	let blocks_elapsed = sub_nat_nat args.level args.last_update m4_debug_err("blocks_elapsed@withdraw_lqt_reward_tokens_internal@lqt_rewards.mligo.m4") in
-	let blocks_elapsed = add_nat_nat blocks_elapsed 1n in // We count the clearing (0th) block as 1 block!
 	let lqt_balance = get_token_balance ( { 
 		token_id = args.lqt_token_id;
 		owner = args.provider_address;

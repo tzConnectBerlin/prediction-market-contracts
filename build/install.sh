@@ -2,13 +2,13 @@
 
 if [[ -z "${1}" ]]; then
 echo "Usage: ./install.sh {tezos-client account name}"
-echo "Eg. ./compile-storage alice"
+echo "Eg. ./install.sh alice"
 exit 1
 fi
 
 account_name=${1}
-contract_name="binarypm"
-burn_cap=2.0
+contract_name="krisa"
+burn_cap=3.0
 
 account_addr=`./getaddr.sh ${account_name}`
 ./build.sh ${account_addr}

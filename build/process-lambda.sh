@@ -1,8 +1,8 @@
 #!/bin/bash
 
 if [[ -z "${1}" ]]; then
-echo "Usage: ./compile-lambda.sh {lambda file}"
-echo "Eg. ./compile-lambda.sh tmp/endpoints.mligo"
+echo "Usage: ./process-lambda.sh {lambda file}"
+echo "Eg. ./process-lambda.sh tmp/endpoints.mligo"
 exit 1
 fi
 
